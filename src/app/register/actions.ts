@@ -46,8 +46,11 @@ export async function registerAction(
     return { errors: { general: [`Session yaratishda xato: ${errorMsg}`] } };
   }
 
+  // RE-INSTANTIATE client so it uses the newly created session cookies for the INSERT
+  const authSupabase = await createClient();
+
   // Insert profile
-  const { error: profileError } = await supabase.from("profiles").insert({
+  const { error: profileError } = await authSupabase.from("profiles").insert({
     id: authData.user.id,
     full_name: fullName,
     role,
