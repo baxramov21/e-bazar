@@ -28,8 +28,8 @@ export default function HomePage() {
           <span style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "0.02em" }}>Bozor-Analitika</span>
         </div>
         <div style={{ display: "flex", gap: 16 }}>
-          <Link href="/login" className="btn btn-ghost">Kirish</Link>
-          <Link href="/register" className="btn btn-primary">Boshlash</Link>
+          <Link href="/buyer/dashboard" className="btn btn-ghost">Xaridor (Dev)</Link>
+          <Link href="/supplier/dashboard" className="btn btn-primary">Yetkazib Beruvchi (Dev)</Link>
         </div>
       </nav>
 
@@ -76,12 +76,12 @@ export default function HomePage() {
         </p>
 
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/register" className="btn btn-primary btn-lg" style={{ padding: "16px 32px", fontSize: "1.1rem" }}>
-            Hozir ulanish
+          <Link href="/buyer/dashboard" className="btn btn-primary btn-lg" style={{ padding: "16px 32px", fontSize: "1.1rem" }}>
+            Xaridor Sifatida Kirish
           </Link>
-          <a href="#how-it-works" className="btn btn-secondary btn-lg" style={{ padding: "16px 32px", fontSize: "1.1rem" }}>
-            Qanday ishlaydi?
-          </a>
+          <Link href="/supplier/dashboard" className="btn btn-secondary btn-lg" style={{ padding: "16px 32px", fontSize: "1.1rem" }}>
+            Yetkazib Beruvchi Sifatida Kirish
+          </Link>
         </div>
 
         {/* Stats strip */}
