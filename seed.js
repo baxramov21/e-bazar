@@ -1,4 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -16,8 +18,9 @@ async function seed() {
   console.log("Seeding database with mock listings...");
 
   // 1. Create a mock user in auth.users
+  const uniqueEmail = `agro_supplier_${Date.now()}@example.com`;
   const { data: userData, error: userError } = await supabase.auth.admin.createUser({
-    email: 'agro_supplier@example.com',
+    email: uniqueEmail,
     password: 'password123',
     email_confirm: true
   });

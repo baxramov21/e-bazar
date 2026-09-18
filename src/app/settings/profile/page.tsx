@@ -35,6 +35,9 @@ export default function ProfileSettingsPage() {
   });
   const [loading, setLoading] = useState(false);
 
+  const initialState: ProfileState = {};
+  const [state, action] = useActionState(updateProfileAction, initialState);
+
   return (
     <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 800 }}>
       
