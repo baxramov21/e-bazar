@@ -25,13 +25,12 @@ export default function HomePage() {
           Uzbekiston uchun AI-asosida{' '}
           <strong style={{ color: 'var(--color-text-primary)' }}>B2B savdo platformasi</strong>
         </p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="/buyer/dashboard" className="btn btn-primary btn-lg">
+            Xaridor Paneli (Dev)
           </a>
-          <a href="/listings" className="btn btn-secondary btn-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-            </svg>
-            Mahsulotlarni Ko&apos;rish
+          <a href="/supplier/dashboard" className="btn btn-secondary btn-lg">
+            Yetkazib Beruvchi Paneli (Dev)
           </a>
         </div>
 
