@@ -242,14 +242,14 @@
   .badge-admin    { background: rgba(245,158,11,0.15); color: #fbbf24; }
 
   /* Order status badges */
-  .status-pending     { @apply badge badge-gray; }
-  .status-matched     { @apply badge badge-blue; }
-  .status-confirmed   { @apply badge badge-purple; }
-  .status-in_delivery { @apply badge badge-yellow; }
-  .status-delivered   { @apply badge badge-cyan; }
-  .status-completed   { @apply badge badge-green; }
-  .status-disputed    { @apply badge badge-red; }
-  .status-cancelled   { @apply badge badge-gray; }
+  .status-pending     { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: var(--color-bg-elevated); color: var(--color-text-secondary); }
+  .status-matched     { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(59,130,246,0.15); color: var(--color-accent-light); }
+  .status-confirmed   { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .status-in_delivery { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .status-delivered   { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(6,182,212,0.15); color: #22d3ee; }
+  .status-completed   { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(16,185,129,0.15); color: #34d399; }
+  .status-disputed    { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: rgba(239,68,68,0.15); color: #f87171; }
+  .status-cancelled   { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: var(--color-bg-elevated); color: var(--color-text-secondary); }
 
   /* Divider */
   .divider {
