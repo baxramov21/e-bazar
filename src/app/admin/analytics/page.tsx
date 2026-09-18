@@ -41,7 +41,7 @@ export default function AdminAnalyticsPage() {
               <YAxis stroke="var(--color-text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000000}M`} />
               <Tooltip 
                 contentStyle={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)" }}
-                formatter={(value: number) => [`${value.toLocaleString()} UZS`, "GMV"]}
+                formatter={(value: any) => [`${Number(value).toLocaleString()} UZS`, "GMV"]}
               />
               <Area type="monotone" dataKey="gmv" stroke="var(--color-accent)" fillOpacity={1} fill="url(#colorGmv)" />
             </AreaChart>
