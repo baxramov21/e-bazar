@@ -42,7 +42,8 @@ export async function registerAction(
   // Create anonymous session
   const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
   if (authError || !authData.user) {
-    return { errors: { general: ["Session yaratishda xato. Qaytadan urinib ko'ring."] } };
+    const errorMsg = authError?.message || "Noma'lum xato";
+    return { errors: { general: [`Session yaratishda xato: ${errorMsg}`] } };
   }
 
   // Insert profile
