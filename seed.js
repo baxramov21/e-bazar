@@ -15,20 +15,26 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 const productsData = [
-  { name: "Oliy navli bug'doy", category: "Qishloq xo'jaligi", unit: "ton", price: 3200000, imgTheme: "wheat" },
-  { name: "Zangiota pomidori", category: "Sabzavotlar", unit: "kg", price: 8000, imgTheme: "tomato" },
-  { name: "Navoiy sementi M400", category: "Qurilish", unit: "ton", price: 850000, imgTheme: "cement" },
-  { name: "Paxta yog'i", category: "Oziq-ovqat", unit: "litre", price: 16000, imgTheme: "cooking-oil" },
-  { name: "Samarqand uzumi", category: "Meva-sabzavot", unit: "kg", price: 15000, imgTheme: "grapes" },
-  { name: "Kalsiyli selitra", category: "Sanoat", unit: "ton", price: 4500000, imgTheme: "fertilizer" },
-  { name: "Sariq piyoz", category: "Sabzavotlar", unit: "kg", price: 3500, imgTheme: "onion" },
-  { name: "Mis simi", category: "Sanoat", unit: "metr", price: 12000, imgTheme: "copper-wire" },
-  { name: "Toshkent gilosi", category: "Meva-sabzavot", unit: "kg", price: 25000, imgTheme: "cherry" },
-  { name: "Qurilish g'ishti", category: "Qurilish", unit: "dona", price: 1200, imgTheme: "bricks" },
-  { name: "Temir armatura", category: "Qurilish", unit: "ton", price: 9200000, imgTheme: "steel-rebar" },
-  { name: "Paxta tolasi", category: "Qishloq xo'jaligi", unit: "ton", price: 15000000, imgTheme: "cotton" },
-  { name: "Makkajo'xori urug'i", category: "Qishloq xo'jaligi", unit: "kg", price: 45000, imgTheme: "corn-seeds" },
-  { name: "Kartoshka (Qizil)", category: "Sabzavotlar", unit: "kg", price: 4500, imgTheme: "potato" }
+  { name: "Kartoshka (Oq, Navoiy)", category: "Sabzavotlar", unit: "kg", price: 3500, imgTheme: "potato" },
+  { name: "Kartoshka (Qizil, Samarqand)", category: "Sabzavotlar", unit: "kg", price: 4200, imgTheme: "red-potato" },
+  { name: "Pomidor (Issiqxona, Zangiota)", category: "Sabzavotlar", unit: "kg", price: 12000, imgTheme: "tomato" },
+  { name: "Piyoz (Sariq, Jizzax)", category: "Sabzavotlar", unit: "kg", price: 2500, imgTheme: "onion" },
+  { name: "Sabzi (Qizil)", category: "Sabzavotlar", unit: "kg", price: 3000, imgTheme: "carrot" },
+  { name: "Karam (Oq boshli)", category: "Sabzavotlar", unit: "kg", price: 2800, imgTheme: "cabbage" },
+  { name: "Olma (Besh yulduz, Namangan)", category: "Meva-sabzavot", unit: "kg", price: 15000, imgTheme: "apple" },
+  { name: "Uzum (Kishmish, Farg'ona)", category: "Meva-sabzavot", unit: "kg", price: 18000, imgTheme: "grapes" },
+  { name: "Gilos (Katta, Toshkent)", category: "Meva-sabzavot", unit: "kg", price: 35000, imgTheme: "cherry" },
+  { name: "Qovun (Mirzacho'l)", category: "Meva-sabzavot", unit: "kg", price: 4500, imgTheme: "melon" },
+  { name: "Tarvuz (Surxondaryo)", category: "Meva-sabzavot", unit: "kg", price: 2000, imgTheme: "watermelon" },
+  { name: "Mol go'shti (Suyaksiz)", category: "Oziq-ovqat", unit: "kg", price: 75000, imgTheme: "beef" },
+  { name: "Qo'y go'shti", category: "Oziq-ovqat", unit: "kg", price: 80000, imgTheme: "lamb-meat" },
+  { name: "Paxta yog'i (Tozalanmagan)", category: "Oziq-ovqat", unit: "litre", price: 14000, imgTheme: "cooking-oil" },
+  { name: "Kungaboqar yog'i (Tozalangan)", category: "Oziq-ovqat", unit: "litre", price: 17000, imgTheme: "sunflower-oil" },
+  { name: "Bug'doy (Oliy nav)", category: "Qishloq xo'jaligi", unit: "ton", price: 3100000, imgTheme: "wheat" },
+  { name: "Shakar (Oq)", category: "Oziq-ovqat", unit: "kg", price: 13500, imgTheme: "sugar" },
+  { name: "Un (1-nav, Qozog'iston)", category: "Oziq-ovqat", unit: "kg", price: 4800, imgTheme: "flour" },
+  { name: "Tuxum (Oliy nav, 10 dona)", category: "Oziq-ovqat", unit: "dona", price: 12000, imgTheme: "eggs" },
+  { name: "Asal (Tog' asali, Jizzax)", category: "Oziq-ovqat", unit: "kg", price: 45000, imgTheme: "honey" }
 ];
 
 const regions = ["Toshkent viloyati", "Surxondaryo", "Navoiy", "Farg'ona", "Samarqand", "Buxoro", "Xorazm", "Andijon"];
@@ -38,7 +44,7 @@ function getRandomItem(arr) {
 }
 
 async function seed() {
-  console.log("Seeding database with 30 mock listings...");
+  console.log("Seeding database with 20 hyper-realistic mock listings...");
 
   const uniqueEmail = `agro_supplier_${Date.now()}@example.com`;
   const { data: userData, error: userError } = await supabase.auth.admin.createUser({
@@ -148,7 +154,7 @@ async function seed() {
     await supabase.from('orders').insert(mockOrders);
   }
 
-  console.log("Successfully inserted 30 mock products and orders into the database!");
+  console.log("Successfully inserted 20 mock products and orders into the database!");
 }
 
 seed().catch(console.error);
