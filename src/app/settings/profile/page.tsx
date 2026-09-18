@@ -25,30 +25,15 @@ const REGIONS = [
 ];
 
 export default function ProfileSettingsPage() {
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  const initialState: ProfileState = {};
-  const [state, action] = useActionState(updateProfileAction, initialState);
-
-  useEffect(() => {
-    async function loadProfile() {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-        setProfile(data);
-      }
-      setLoading(false);
-    }
-    loadProfile();
-  }, []);
-
-  if (loading) {
-    return <div className="page-container p-8"><div className="skeleton" style={{ height: 400 }} /></div>;
-  }
-
-  if (!profile) return null;
+  const [profile, setProfile] = useState<any>({
+    full_name: "Test Foydalanuvchi",
+    role: "supplier",
+    company_name: "Test MChJ",
+    region: "Toshkent shahri",
+    address: "Amir Temur ko'chasi, 1-uy",
+    tin: "123456789"
+  });
+  const [loading, setLoading] = useState(false);
 
   return (
     <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 800 }}>
