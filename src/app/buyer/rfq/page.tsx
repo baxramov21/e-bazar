@@ -52,9 +52,15 @@ export default async function BuyerRfqPage() {
               </div>
             </div>
             
-            <button className="btn btn-secondary btn-sm" disabled={rfq.status !== "matched"}>
-              {rfq.status === "matched" ? "Takliflarni ko'rish" : "Kutilmoqda..."}
-            </button>
+            {rfq.status === "matched" ? (
+              <Link href={`/buyer/rfq/${rfq.id}`} className="btn btn-secondary btn-sm">
+                Takliflarni ko'rish
+              </Link>
+            ) : (
+              <button className="btn btn-secondary btn-sm" disabled>
+                Kutilmoqda...
+              </button>
+            )}
           </div>
         ))}
 

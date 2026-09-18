@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { selectOfferAction } from "./actions";
 
-export default async function RfqDetailPage({ params }: { params: { id: string } }) {
+export default async function RfqDetailPage({ params }: { params: any }) {
   const supabase = await createClient();
+  const { id } = await params;
 
   const { data: rfq } = await supabase
     .from("purchase_requests")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!rfq) {

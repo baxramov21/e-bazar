@@ -2,8 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function ListingDetailPage({ params }: { params: { id: string } }) {
+export default async function ListingDetailPage({ params }: { params: any }) {
   const supabase = await createClient();
+  const { id } = await params;
   
   const { data: listing, error } = await supabase
     .from("listings")
@@ -11,7 +12,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
       *,
       supplier:profiles!supplier_id(full_name, company_name, trust_score, kyb_status, address, region)
     `)
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (error || !listing) {
