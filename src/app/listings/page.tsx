@@ -1,11 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default async function ListingsPage() {
+export default async function ListingsPage({ searchParams }: { searchParams: { q?: string, category?: string } }) {
   const supabase = await createClient();
   
-  // Fetch active listings and join with supplier profiles
-  const { data: listings, error } = await supabase
+  const q = searchParams.q || "";
+  const category = searchParams.category || "";
+
+  // Base query
+  let query = supabase
     .from("listings")
     .select(`
       *,
@@ -14,9 +18,23 @@ export default async function ListingsPage() {
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
+  // Apply filters if present
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (category) {
+    query = query.eq("category", category);
+  }
+
+  const { data: listings, error } = await query;
+
   if (error) {
     console.error("Error fetching listings:", error);
   }
+
+  const categories = [
+    "Qishloq xo'jaligi", "Sabzavotlar", "Sanoat", "Oziq-ovqat", "Meva-sabzavot", "Qurilish"
+  ];
 
   return (
     <main className="page-container" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
@@ -30,6 +48,36 @@ export default async function ListingsPage() {
           </p>
         </div>
         <Link href="/" className="btn btn-secondary">Bosh sahifaga qaytish</Link>
+      </div>
+
+      {/* Search & Filters */}
+      <div className="card" style={{ marginBottom: 32, padding: "20px 24px" }}>
+        <form style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+          <div style={{ flex: "1 1 300px" }}>
+            <input 
+              type="text" 
+              name="q" 
+              defaultValue={q}
+              placeholder="Mahsulot nomini qidiring (masalan, Sement)..." 
+              className="input"
+            />
+          </div>
+          <div style={{ flex: "0 0 250px" }}>
+            <select name="category" defaultValue={category} className="input">
+              <option value="">Barcha kategoriyalar</option>
+              {categories.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ flex: "0 0 auto" }}>Izlash</button>
+          
+          {(q || category) && (
+            <Link href="/listings" className="btn btn-ghost" style={{ flex: "0 0 auto" }}>
+              Tozalash
+            </Link>
+          )}
+        </form>
       </div>
 
       {/* Grid */}
@@ -108,15 +156,15 @@ export default async function ListingsPage() {
             </div>
 
             {/* Action button */}
-            <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }}>
+            <Link href={`/listings/${item.id}`} className="btn btn-primary" style={{ width: "100%", marginTop: 8, justifyContent: "center" }}>
               Batafsil
-            </button>
+            </Link>
           </div>
         ))}
 
         {listings?.length === 0 && (
           <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", color: "var(--color-text-muted)" }}>
-            Hozircha mahsulotlar yo'q.
+            Qidiruv bo'yicha mahsulotlar topilmadi.
           </div>
         )}
       </div>
