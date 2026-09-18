@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 
 export default async function BuyerRfqPage() {
   const supabase = await createClient();
@@ -28,7 +29,7 @@ export default async function BuyerRfqPage() {
           </p>
         </div>
         <div style={{ display: "flex", gap: 12 }}>
-          <Link href="/buyer/dashboard" className="btn btn-secondary">Orqaga</Link>
+          <BackButton fallback="/buyer/dashboard" />
           <Link href="/buyer/rfq/new" className="btn btn-primary">
             + Yangi so'rov
           </Link>

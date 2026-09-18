@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
 export default async function ListingDetailPage({ params }: { params: any }) {
   const supabase = await createClient();
@@ -24,9 +25,7 @@ export default async function ListingDetailPage({ params }: { params: any }) {
       
       {/* Breadcrumb / Back */}
       <div style={{ marginBottom: 24 }}>
-        <Link href="/listings" style={{ color: "var(--color-text-muted)", textDecoration: "none", fontSize: "0.95rem" }}>
-          ← Barcha mahsulotlarga qaytish
-        </Link>
+        <BackButton fallback="/listings" />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 32, alignItems: "start" }}>

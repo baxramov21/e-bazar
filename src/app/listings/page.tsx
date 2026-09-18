@@ -1,12 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
-export default async function ListingsPage({ searchParams }: { searchParams: { q?: string, category?: string } }) {
+export default async function ListingsPage({ searchParams }: { searchParams: Promise<{ q?: string, category?: string }> }) {
   const supabase = await createClient();
   
-  const q = searchParams.q || "";
-  const category = searchParams.category || "";
+  const resolvedParams = await searchParams;
+  const q = resolvedParams.q || "";
+  const category = resolvedParams.category || "";
 
   // Base query
   let query = supabase
@@ -47,7 +49,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: { q
             O'zbekiston bo'ylab yetkazib beruvchilarning eng so'nggi takliflari
           </p>
         </div>
-        <Link href="/" className="btn btn-secondary">Bosh sahifaga qaytish</Link>
+        <BackButton fallback="/" />
       </div>
 
       {/* Search & Filters */}

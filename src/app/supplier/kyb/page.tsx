@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 
 export default function KYBSumbissionPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -101,7 +102,7 @@ export default function KYBSumbissionPage() {
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>KYB Verifikatsiyasi</h1>
           <p style={{ color: "var(--color-text-muted)" }}>Biznesingizni tasdiqlang</p>
         </div>
-        <Link href="/supplier/dashboard" className="btn btn-secondary btn-sm">Orqaga</Link>
+        <BackButton fallback="/supplier/dashboard" />
       </div>
 
       <div className="card">

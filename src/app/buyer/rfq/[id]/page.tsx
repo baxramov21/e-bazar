@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 import { selectOfferAction } from "./actions";
 
 export default async function RfqDetailPage({ params }: { params: any }) {
@@ -44,7 +45,7 @@ export default async function RfqDetailPage({ params }: { params: any }) {
           </div>
           <p style={{ color: "var(--color-text-muted)" }}>ID: {rfq.id}</p>
         </div>
-        <Link href="/buyer/rfq" className="btn btn-secondary btn-sm">Orqaga</Link>
+        <BackButton fallback="/buyer/rfq" />
       </div>
 
       <div className="card" style={{ marginBottom: 32 }}>
