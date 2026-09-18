@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="min-h-dvh flex flex-col items-center justify-center" style={{ background: 'var(--color-bg-base)' }}>
@@ -26,12 +28,12 @@ export default function HomePage() {
           <strong style={{ color: 'var(--color-text-primary)' }}>B2B savdo platformasi</strong>
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/buyer/dashboard" className="btn btn-primary btn-lg">
+          <Link href="/buyer/dashboard" className="btn btn-primary btn-lg">
             Xaridor Paneli (Dev)
-          </a>
-          <a href="/supplier/dashboard" className="btn btn-secondary btn-lg">
+          </Link>
+          <Link href="/supplier/dashboard" className="btn btn-secondary btn-lg">
             Yetkazib Beruvchi Paneli (Dev)
-          </a>
+          </Link>
         </div>
 
         {/* Stats strip */}

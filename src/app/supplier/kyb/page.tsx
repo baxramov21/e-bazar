@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function KYBSumbissionPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -100,7 +101,7 @@ export default function KYBSumbissionPage() {
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>KYB Verifikatsiyasi</h1>
           <p style={{ color: "var(--color-text-muted)" }}>Biznesingizni tasdiqlang</p>
         </div>
-        <a href="/supplier/dashboard" className="btn btn-secondary btn-sm">Orqaga</a>
+        <Link href="/supplier/dashboard" className="btn btn-secondary btn-sm">Orqaga</Link>
       </div>
 
       <div className="card">
