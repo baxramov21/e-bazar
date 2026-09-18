@@ -14,19 +14,23 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
-const productNames = [
-  "Oliy navli bug'doy", "Zangiota pomidori", "Navoiy sementi M400", "Paxta yog'i", 
-  "Samarqand uzumi", "Kalsiyli selitra", "Sariq piyoz", "Mis simi",
-  "Toshkent gilosi", "Farg'ona anori", "Shisha idishlar", "Qurilish g'ishti",
-  "Temir armatura", "Paxta tolasi", "Makkajo'xori urug'i", "Kartoshka (Qizil)",
-  "Olmaliq ruxi", "O'g'it (Ammiak selitrasi)", "Asal (Tog' asali)", "Qovun (Mirzacho'l)",
-  "Tarvuz", "G'alla kombayni ehtiyot qismlari", "Dizel yoqilg'isi", "Plastik quvurlar",
-  "Qadoqlash qutilari", "Parranda go'shti", "Tuxum (Oliy nav)", "Pishloq",
-  "Shakar", "Kungaboqar yog'i"
+const productsData = [
+  { name: "Oliy navli bug'doy", category: "Qishloq xo'jaligi", unit: "ton", price: 3200000, imgTheme: "wheat" },
+  { name: "Zangiota pomidori", category: "Sabzavotlar", unit: "kg", price: 8000, imgTheme: "tomato" },
+  { name: "Navoiy sementi M400", category: "Qurilish", unit: "ton", price: 850000, imgTheme: "cement" },
+  { name: "Paxta yog'i", category: "Oziq-ovqat", unit: "litre", price: 16000, imgTheme: "cooking-oil" },
+  { name: "Samarqand uzumi", category: "Meva-sabzavot", unit: "kg", price: 15000, imgTheme: "grapes" },
+  { name: "Kalsiyli selitra", category: "Sanoat", unit: "ton", price: 4500000, imgTheme: "fertilizer" },
+  { name: "Sariq piyoz", category: "Sabzavotlar", unit: "kg", price: 3500, imgTheme: "onion" },
+  { name: "Mis simi", category: "Sanoat", unit: "metr", price: 12000, imgTheme: "copper-wire" },
+  { name: "Toshkent gilosi", category: "Meva-sabzavot", unit: "kg", price: 25000, imgTheme: "cherry" },
+  { name: "Qurilish g'ishti", category: "Qurilish", unit: "dona", price: 1200, imgTheme: "bricks" },
+  { name: "Temir armatura", category: "Qurilish", unit: "ton", price: 9200000, imgTheme: "steel-rebar" },
+  { name: "Paxta tolasi", category: "Qishloq xo'jaligi", unit: "ton", price: 15000000, imgTheme: "cotton" },
+  { name: "Makkajo'xori urug'i", category: "Qishloq xo'jaligi", unit: "kg", price: 45000, imgTheme: "corn-seeds" },
+  { name: "Kartoshka (Qizil)", category: "Sabzavotlar", unit: "kg", price: 4500, imgTheme: "potato" }
 ];
 
-const categories = ["Qishloq xo'jaligi", "Sabzavotlar", "Sanoat", "Oziq-ovqat", "Meva-sabzavot", "Qurilish"];
-const units = ["ton", "kg", "litre", "dona", "metr"];
 const regions = ["Toshkent viloyati", "Surxondaryo", "Navoiy", "Farg'ona", "Samarqand", "Buxoro", "Xorazm", "Andijon"];
 
 function getRandomItem(arr) {
@@ -87,23 +91,23 @@ async function seed() {
     });
   }
 
-  const listingsToInsert = Array.from({ length: 30 }).map((_, i) => ({
-    title: `${productNames[i]}`,
-    category: getRandomItem(categories),
-    subcategory: 'Turli xil',
-    description: `Eng sifatli ${productNames[i]} mahsuloti. B2B savdo uchun maxsus taklif.`,
-    unit: getRandomItem(units),
-    price_per_unit: Math.floor(Math.random() * 5000000) + 150000, // Fixed unrealistic prices (150K to 5M)
+  const listingsToInsert = productsData.map((prod, i) => ({
+    title: prod.name,
+    category: prod.category,
+    subcategory: 'Asosiy',
+    description: `Eng sifatli ${prod.name} mahsuloti. B2B savdo uchun maxsus taklif. O'zbekiston bo'ylab yetkazib beriladi.`,
+    unit: prod.unit,
+    price_per_unit: prod.price,
     currency: 'UZS',
-    moq: Math.floor(Math.random() * 100) + 10,
-    available_quantity: Math.floor(Math.random() * 10000) + 1000,
+    moq: Math.floor(Math.random() * 50) + 10,
+    available_quantity: Math.floor(Math.random() * 5000) + 500,
     location_region: getRandomItem(regions),
     delivery_regions: ['Toshkent shahri', 'Toshkent viloyati', 'Barcha viloyatlar'],
     delivery_days: Math.floor(Math.random() * 5) + 1,
-    delivery_cost_per_ton: Math.floor(Math.random() * 500000),
+    delivery_cost_per_ton: Math.floor(Math.random() * 200000) + 50000,
     stock_status: Math.random() > 0.1 ? 'available' : 'low_stock',
     supplier_id: supplierId,
-    images: [`https://picsum.photos/seed/agro${i}/800/600`] // Added pictures
+    images: [`https://loremflickr.com/800/600/${prod.imgTheme}`]
   }));
 
   const { data: insertedListings, error: listingsError } = await supabase.from('listings').insert(listingsToInsert).select();

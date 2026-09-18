@@ -42,3 +42,59 @@ export async function selectOfferAction(matchId: string, rfqId: string, formData
 
   revalidatePath(`/buyer/rfq/${rfqId}`);
 }
+
+export async function runAiMatchingAction(rfqId: string) {
+  const supabase = await createClient();
+
+  // 1. Fetch RFQ
+  const { data: rfq } = await supabase.from("purchase_requests").select("*").eq("id", rfqId).single();
+  if (!rfq) throw new Error("RFQ not found");
+
+  // 2. Fetch 3 listings matching the category
+  const { data: listings } = await supabase
+    .from("listings")
+    .select("*, profiles!inner(trust_score)")
+    .eq("category", rfq.category)
+    .limit(3);
+
+  if (!listings || listings.length === 0) {
+    // If no exact match, just get any 3 listings for the MVP demo
+    const { data: fallbackListings } = await supabase
+      .from("listings")
+      .select("*, profiles!inner(trust_score)")
+      .limit(3);
+    
+    if (fallbackListings) listings.push(...fallbackListings);
+  }
+
+  // 3. Generate match results
+  if (listings && listings.length > 0) {
+    const matchResults = listings.map((listing: any, index: number) => {
+      // Calculate a dummy AI score based on trust_score and price
+      let score = 0.95 - (index * 0.05); // e.g. 95%, 90%, 85%
+      
+      const requestedQty = Number(rfq.requested_quantity) || 1;
+      const pricePerUnit = Number(listing.price_per_unit);
+      const deliveryCost = Number(listing.delivery_cost_per_ton) * (requestedQty / 1000); // rough calc
+
+      return {
+        purchase_request_id: rfq.id,
+        supplier_id: listing.supplier_id,
+        listing_id: listing.id,
+        score_total: score,
+        score_price: score + 0.02,
+        score_delivery: score - 0.01,
+        score_trust: (listing.profiles?.trust_score || 4.5) / 5,
+        estimated_total_cost: (pricePerUnit * requestedQty) + deliveryCost,
+        offered_price_per_unit: pricePerUnit
+      };
+    });
+
+    await supabase.from("match_results").insert(matchResults);
+  }
+
+  // 4. Update RFQ status
+  await supabase.from("purchase_requests").update({ status: "matched" }).eq("id", rfq.id);
+
+  revalidatePath(`/buyer/rfq/${rfqId}`);
+}

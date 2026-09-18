@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { registerAction, type RegisterState } from "./actions";
+import Link from "next/link";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -146,6 +147,44 @@ export default function RegisterPage() {
               )}
             </div>
 
+            {/* Email */}
+            <div>
+              <label className="input-label" htmlFor="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="ali@example.com"
+                autoComplete="email"
+                className="input"
+                style={state?.errors?.email ? { borderColor: "var(--color-danger)" } : {}}
+              />
+              {state?.errors?.email && (
+                <p style={{ color: "var(--color-danger)", fontSize: "12px", marginTop: 4 }}>
+                  {state.errors.email[0]}
+                </p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="input-label" htmlFor="password">Parol</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                className="input"
+                style={state?.errors?.password ? { borderColor: "var(--color-danger)" } : {}}
+              />
+              {state?.errors?.password && (
+                <p style={{ color: "var(--color-danger)", fontSize: "12px", marginTop: 4 }}>
+                  {state.errors.password[0]}
+                </p>
+              )}
+            </div>
+
             {/* Role Selection */}
             <div>
               <label className="input-label">Men kimman?</label>
@@ -196,9 +235,12 @@ export default function RegisterPage() {
           </form>
         </div>
 
-        <p style={{ textAlign: "center", marginTop: 20, fontSize: "12px", color: "var(--color-text-muted)" }}>
-          MVP versiyasi — barcha ma&apos;lumotlar vaqtincha saqlanadi
-        </p>
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: "14px", color: "var(--color-text-muted)" }}>
+          Akkauntingiz bormi?{" "}
+          <Link href="/login" style={{ color: "var(--color-accent-light)", fontWeight: 600, textDecoration: "none" }}>
+            Tizimga kirish
+          </Link>
+        </div>
       </div>
 
       {/* Role card hover/selected styles */}

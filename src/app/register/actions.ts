@@ -7,6 +7,8 @@ import { z } from "zod";
 const RegisterSchema = z.object({
   firstName: z.string().min(2, "Ism kamida 2 ta harf bo'lishi kerak").regex(/^[\p{L}\s'-]+$/u, "Faqat harflar ishlatilsin"),
   lastName: z.string().min(2, "Familiya kamida 2 ta harf bo'lishi kerak").regex(/^[\p{L}\s'-]+$/u, "Faqat harflar ishlatilsin"),
+  email: z.string().email("Tog'ri email kiriting"),
+  password: z.string().min(6, "Parol kamida 6 belgidan iborat bo'lishi kerak"),
   role: z.enum(["buyer", "supplier"], { message: "Rolni tanlang" }),
 });
 
@@ -14,6 +16,8 @@ export type RegisterState = {
   errors?: {
     firstName?: string[];
     lastName?: string[];
+    email?: string[];
+    password?: string[];
     role?: string[];
     general?: string[];
   };
@@ -26,6 +30,8 @@ export async function registerAction(
   const raw = {
     firstName: formData.get("firstName") as string,
     lastName: formData.get("lastName") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
     role: formData.get("role") as string,
   };
 
@@ -34,22 +40,26 @@ export async function registerAction(
     return { errors: parsed.error.flatten().fieldErrors };
   }
 
-  const { firstName, lastName, role } = parsed.data;
+  const { firstName, lastName, email, password, role } = parsed.data;
   const fullName = `${firstName} ${lastName}`.trim();
 
   const supabase = await createClient();
 
-  // Create anonymous session
-  const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+  // Create real user via email/password
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
   if (authError || !authData.user) {
     const errorMsg = authError?.message || "Noma'lum xato";
-    return { errors: { general: [`Session yaratishda xato: ${errorMsg}`] } };
+    return { errors: { general: [`Ro'yxatdan o'tishda xato: ${errorMsg}`] } };
   }
 
-  // RE-INSTANTIATE client so it uses the newly created session cookies for the INSERT
+  // Insert profile (RLS bypass trigger will handle verification, but we still need to wait for cookie propagation or just insert profile)
+  // Re-instantiate to ensure we have the session
   const authSupabase = await createClient();
 
-  // Insert profile
   const { error: profileError } = await authSupabase.from("profiles").insert({
     id: authData.user.id,
     full_name: fullName,

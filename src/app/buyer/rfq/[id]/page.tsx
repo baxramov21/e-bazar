@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import { selectOfferAction } from "./actions";
+import AILoadingWrapper from "@/components/AILoadingWrapper";
 
 export default async function RfqDetailPage({ params }: { params: any }) {
   const supabase = await createClient();
@@ -77,13 +78,7 @@ export default async function RfqDetailPage({ params }: { params: any }) {
       </div>
 
       {rfq.status === "open" && (
-        <div className="empty-state">
-          <div className="spinner" style={{ marginBottom: 16 }} />
-          <h3 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 8 }}>Sun'iy intellekt ishlamoqda...</h3>
-          <p style={{ color: "var(--color-text-muted)" }}>
-            Sizning talabnomangiz bo'yicha eng yaxshi yetkazib beruvchilar qidirilmoqda. Natijalar tez orada paydo bo'ladi.
-          </p>
-        </div>
+        <AILoadingWrapper rfqId={rfq.id} />
       )}
 
       {rfq.status === "matched" && (
