@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import BackButton from "@/components/BackButton";
+import ListingsFilter from "@/components/ListingsFilter";
 
 export default async function ListingsPage({ searchParams }: { searchParams: Promise<{ q?: string, category?: string }> }) {
   const supabase = await createClient();
@@ -42,45 +43,20 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
     <main className="page-container" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
       
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 32 }}>
+        <div>
+          <BackButton fallback="/" />
+        </div>
         <div>
           <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Barcha Mahsulotlar</h1>
           <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
             O'zbekiston bo'ylab yetkazib beruvchilarning eng so'nggi takliflari
           </p>
         </div>
-        <BackButton fallback="/" />
       </div>
 
-      {/* Search & Filters */}
-      <div className="card" style={{ marginBottom: 32, padding: "20px 24px" }}>
-        <form style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ flex: "1 1 300px" }}>
-            <input 
-              type="text" 
-              name="q" 
-              defaultValue={q}
-              placeholder="Mahsulot nomini qidiring (masalan, Sement)..." 
-              className="input"
-            />
-          </div>
-          <div style={{ flex: "0 0 250px" }}>
-            <select name="category" defaultValue={category} className="input">
-              <option value="">Barcha kategoriyalar</option>
-              {categories.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary" style={{ flex: "0 0 auto" }}>Izlash</button>
-          
-          {(q || category) && (
-            <Link href="/listings" className="btn btn-ghost" style={{ flex: "0 0 auto" }}>
-              Tozalash
-            </Link>
-          )}
-        </form>
-      </div>
+      {/* Search & Filters (Interactive) */}
+      <ListingsFilter initialQ={q} initialCategory={category} />
 
       {/* Grid */}
       <div style={{ 
