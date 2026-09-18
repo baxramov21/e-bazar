@@ -47,6 +47,7 @@ export default function NewRfqPage() {
               <select id="category" name="category" className="input" required>
                 <option value="">Tanlang...</option>
                 <option value="Qishloq xo'jaligi">Qishloq xo'jaligi</option>
+                <option value="Sabzavotlar">Sabzavotlar</option>
                 <option value="Sanoat">Sanoat</option>
                 <option value="Qurilish">Qurilish</option>
                 <option value="Oziq-ovqat">Oziq-ovqat</option>
