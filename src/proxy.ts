@@ -37,36 +37,13 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith("/listings")
   );
 
-  // No session → redirect to register (except public routes)
-  if (!user && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/register", request.url));
-  }
+  // Temporarily bypass auth for development
+  // if (!user && !isPublicRoute) {
+  //   return NextResponse.redirect(new URL("/register", request.url));
+  // }
 
   // Has session → don't let them hit /register again
-  if (user && pathname === "/register") {
-    // Check profile role and redirect appropriately
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role === "admin") {
-      return NextResponse.redirect(new URL("/admin", request.url));
-    } else if (profile?.role === "supplier") {
-      return NextResponse.redirect(new URL("/supplier/dashboard", request.url));
-    } else if (profile?.role === "buyer") {
-      return NextResponse.redirect(new URL("/buyer/dashboard", request.url));
-    } else {
-      // Profile does not exist (failed insert). Sign them out to break the loop.
-      await supabase.auth.signOut();
-      const response = NextResponse.redirect(new URL("/register", request.url));
-      // Delete cookies to ensure complete sign out
-      response.cookies.delete("sb-access-token");
-      response.cookies.delete("sb-refresh-token");
-      return response;
-    }
-  }
+  // if (user && pathname === "/register") { ... }
 
   return supabaseResponse;
 }
