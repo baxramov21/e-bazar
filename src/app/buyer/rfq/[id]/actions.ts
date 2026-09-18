@@ -57,19 +57,21 @@ export async function runAiMatchingAction(rfqId: string) {
     .eq("category", rfq.category)
     .limit(3);
 
-  if (!listings || listings.length === 0) {
+  let listingsData = listings || [];
+
+  if (listingsData.length === 0) {
     // If no exact match, just get any 3 listings for the MVP demo
     const { data: fallbackListings } = await supabase
       .from("listings")
       .select("*, profiles!inner(trust_score)")
       .limit(3);
     
-    if (fallbackListings) listings.push(...fallbackListings);
+    if (fallbackListings) listingsData = fallbackListings;
   }
 
   // 3. Generate match results
-  if (listings && listings.length > 0) {
-    const matchResults = listings.map((listing: any, index: number) => {
+  if (listingsData.length > 0) {
+    const matchResults = listingsData.map((listing: any, index: number) => {
       // Calculate a dummy AI score based on trust_score and price
       let score = 0.95 - (index * 0.05); // e.g. 95%, 90%, 85%
       

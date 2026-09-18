@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import Link from "next/link";
-
 export default function HomePage() {
   return (
     <main className="min-h-dvh flex flex-col" style={{ background: 'var(--color-bg-base)' }}>
