@@ -44,6 +44,12 @@ function getRandomItem(arr) {
 }
 
 async function seed() {
+  console.log("Cleaning up old data...");
+  await supabase.from('orders').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  await supabase.from('listings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  await supabase.from('match_results').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  await supabase.from('purchase_requests').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  
   console.log("Seeding database with 20 hyper-realistic mock listings...");
 
   const uniqueEmail = `agro_supplier_${Date.now()}@example.com`;
