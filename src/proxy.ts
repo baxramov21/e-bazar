@@ -55,8 +55,16 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/admin", request.url));
     } else if (profile?.role === "supplier") {
       return NextResponse.redirect(new URL("/supplier/dashboard", request.url));
-    } else {
+    } else if (profile?.role === "buyer") {
       return NextResponse.redirect(new URL("/buyer/dashboard", request.url));
+    } else {
+      // Profile does not exist (failed insert). Sign them out to break the loop.
+      await supabase.auth.signOut();
+      const response = NextResponse.redirect(new URL("/register", request.url));
+      // Delete cookies to ensure complete sign out
+      response.cookies.delete("sb-access-token");
+      response.cookies.delete("sb-refresh-token");
+      return response;
     }
   }
 
