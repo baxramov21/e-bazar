@@ -2,6 +2,9 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function selectOfferAction(matchId: string, rfqId: string, formData?: FormData) {
   const supabase = await createClient();
@@ -50,34 +53,108 @@ export async function runAiMatchingAction(rfqId: string) {
   const { data: rfq } = await supabase.from("purchase_requests").select("*").eq("id", rfqId).single();
   if (!rfq) throw new Error("RFQ not found");
 
-  // 2. Fetch 3 listings matching the category
+  // 2. Fetch all listings matching the category
   const { data: listings } = await supabase
     .from("listings")
-    .select("*, profiles!inner(trust_score)")
-    .eq("category", rfq.category)
-    .limit(3);
+    .select("*, profiles!inner(company_name, trust_score)")
+    .eq("category", rfq.category);
 
   let listingsData = listings || [];
 
   if (listingsData.length === 0) {
-    // If no exact match, just get any 3 listings for the MVP demo
     const { data: fallbackListings } = await supabase
       .from("listings")
-      .select("*, profiles!inner(trust_score)")
-      .limit(3);
-    
+      .select("*, profiles!inner(company_name, trust_score)")
+      .limit(10);
     if (fallbackListings) listingsData = fallbackListings;
   }
 
-  // 3. Generate match results
-  if (listingsData.length > 0) {
-    const matchResults = listingsData.map((listing: any, index: number) => {
-      // Calculate a dummy AI score based on trust_score and price
-      let score = 0.95 - (index * 0.05); // e.g. 95%, 90%, 85%
-      
+  // 3. Ask Gemini to evaluate and score
+  const prompt = `
+    You are an expert B2B procurement AI. Evaluate the following supplier listings against the buyer's RFQ.
+    
+    Buyer RFQ:
+    - Title: ${rfq.title}
+    - Category: ${rfq.category}
+    - Requested Quantity: ${rfq.requested_quantity} ${rfq.unit}
+    - Destination: ${rfq.destination_region}
+    - Urgency: ${rfq.urgency_level}
+    - Description: ${rfq.description || 'N/A'}
+    
+    Supplier Listings:
+    ${JSON.stringify(listingsData.map((l: any) => ({
+      id: l.id,
+      supplier_id: l.supplier_id,
+      title: l.title,
+      price_per_unit: l.price_per_unit,
+      delivery_cost_per_ton: l.delivery_cost_per_ton,
+      trust_score: l.profiles?.trust_score,
+      company_name: l.profiles?.company_name,
+      delivery_days: l.delivery_days
+    })), null, 2)}
+    
+    Select the top 3 best matching listings. For each, calculate a score between 0.0 and 1.0.
+    - score_price: how good the price is.
+    - score_delivery: how good the delivery terms are.
+    - score_trust: the normalized trust score.
+    - score_total: the overall weighted score.
+    
+    Return exactly a JSON array of the top 3 matches with this exact schema:
+    [
+      {
+        "listing_id": "uuid",
+        "supplier_id": "uuid",
+        "score_total": 0.95,
+        "score_price": 0.9,
+        "score_delivery": 0.8,
+        "score_trust": 0.98,
+        "reasoning": "1 sentence explanation"
+      }
+    ]
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const text = response.text || "[]";
+    const topMatches = JSON.parse(text);
+
+    if (Array.isArray(topMatches) && topMatches.length > 0) {
+      const matchResults = topMatches.map((match: any) => {
+        const listing = listingsData.find((l: any) => l.id === match.listing_id);
+        const requestedQty = Number(rfq.requested_quantity) || 1;
+        const pricePerUnit = Number(listing?.price_per_unit || 0);
+        const deliveryCost = Number(listing?.delivery_cost_per_ton || 0) * (requestedQty / 1000);
+
+        return {
+          purchase_request_id: rfq.id,
+          supplier_id: match.supplier_id,
+          listing_id: match.listing_id,
+          score_total: match.score_total,
+          score_price: match.score_price,
+          score_delivery: match.score_delivery,
+          score_trust: match.score_trust,
+          estimated_total_cost: (pricePerUnit * requestedQty) + deliveryCost,
+          offered_price_per_unit: pricePerUnit
+        };
+      });
+
+      await supabase.from("match_results").insert(matchResults);
+    }
+  } catch (error) {
+    console.error("AI matching failed:", error);
+    // Fallback to heuristic if AI fails (e.g. no API key)
+    const fallbackResults = listingsData.slice(0, 3).map((listing: any, index: number) => {
+      let score = 0.95 - (index * 0.05);
       const requestedQty = Number(rfq.requested_quantity) || 1;
       const pricePerUnit = Number(listing.price_per_unit);
-      const deliveryCost = Number(listing.delivery_cost_per_ton) * (requestedQty / 1000); // rough calc
+      const deliveryCost = Number(listing.delivery_cost_per_ton) * (requestedQty / 1000);
 
       return {
         purchase_request_id: rfq.id,
@@ -91,8 +168,7 @@ export async function runAiMatchingAction(rfqId: string) {
         offered_price_per_unit: pricePerUnit
       };
     });
-
-    await supabase.from("match_results").insert(matchResults);
+    await supabase.from("match_results").insert(fallbackResults);
   }
 
   // 4. Update RFQ status
