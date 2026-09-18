@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+import { runScoringEngine } from "@/lib/scoring";
+
 export async function createRfqAction(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
@@ -26,7 +28,7 @@ export async function createRfqAction(prevState: any, formData: FormData) {
     return { error: "Iltimos, barcha majburiy maydonlarni to'ldiring." };
   }
 
-  const { error } = await supabase.from("purchase_requests").insert({
+  const { data, error } = await supabase.from("purchase_requests").insert({
     buyer_id: buyerId,
     title,
     category,
@@ -35,12 +37,15 @@ export async function createRfqAction(prevState: any, formData: FormData) {
     budget_per_unit,
     destination_region,
     urgency_level
-  });
+  }).select("id").single();
 
-  if (error) {
+  if (error || !data) {
     console.error("Insert error:", error);
     return { error: "Xatolik yuz berdi. Qaytadan urinib ko'ring." };
   }
+
+  // Run the scoring engine asynchronously in the background
+  runScoringEngine(data.id).catch(console.error);
 
   redirect("/buyer/rfq");
 }

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { selectOfferAction } from "./actions";
 
 export default async function RfqDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
@@ -115,7 +116,9 @@ export default async function RfqDetailPage({ params }: { params: { id: string }
                 </div>
                 
                 <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px dashed var(--color-border)", display: "flex", justifyContent: "flex-end" }}>
-                  <button className="btn btn-primary">Shu taklifni tanlash</button>
+                  <form action={selectOfferAction.bind(null, match.id, rfq.id)}>
+                    <button type="submit" className="btn btn-primary">Shu taklifni tanlash</button>
+                  </form>
                 </div>
               </div>
             ))}
