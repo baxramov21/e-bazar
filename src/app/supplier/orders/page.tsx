@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 import { markOrderShippedAction } from "./actions";
 
 export default async function SupplierOrdersPage() {
@@ -23,14 +24,16 @@ export default async function SupplierOrdersPage() {
 
   return (
     <main className="page-container fade-in" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 32 }}>
+        <div>
+          <BackButton fallback="/supplier/dashboard" />
+        </div>
         <div>
           <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Kelayotgan Buyurtmalar</h1>
           <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
             Mijozlardan tushgan xarid buyurtmalari
           </p>
         </div>
-        <Link href="/supplier/dashboard" className="btn btn-secondary">Orqaga</Link>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
