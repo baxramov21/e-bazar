@@ -2,8 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { DashboardLineChart, DashboardPieChart } from "@/components/DashboardCharts";
-import { Search } from "lucide-react";
-import { generateMarketPredictionAction } from "./actions";
 
 export default async function BuyerDashboard() {
   const supabase = await createClient();
@@ -93,34 +91,6 @@ export default async function BuyerDashboard() {
           ))}
         </div>
 
-        {/* AI Market Search */}
-        <div className="card" style={{ marginBottom: 32, background: "linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.8))", border: "1px solid var(--color-border)", overflow: "hidden", position: "relative" }}>
-          <div style={{ position: "absolute", top: -50, right: -50, width: 200, height: 200, background: "var(--color-accent)", opacity: 0.1, filter: "blur(60px)", borderRadius: "50%" }}></div>
-          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ color: "var(--color-accent-light)" }}>BozorAI™</span> Tahlili (Market Intelligence)
-          </h2>
-          <p style={{ color: "var(--color-text-secondary)", marginBottom: 16, fontSize: "0.95rem" }}>
-            Mahsulot nomini kiriting va sun'iy intellekt bozor holati, narx tendensiyalari va xarid qilish bo'yicha tavsiya beradi.
-          </p>
-          <form action={generateMarketPredictionAction} style={{ display: "flex", gap: 12 }}>
-            <div style={{ flex: 1, position: "relative" }}>
-              <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }}>
-                <Search size={18} />
-              </div>
-              <input 
-                type="text" 
-                name="query" 
-                placeholder="Masalan: Pomidor bozori qanday bo'ladi? Yoki 'Bug'doy narxi'..." 
-                className="input-field" 
-                style={{ paddingLeft: 44, width: "100%", height: 50 }}
-                required
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" style={{ height: 50, padding: "0 24px" }}>
-              Tahlil qilish
-            </button>
-          </form>
-        </div>
 
         {/* Charts */}
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 32 }}>
