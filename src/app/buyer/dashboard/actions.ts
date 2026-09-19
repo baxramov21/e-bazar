@@ -27,14 +27,18 @@ export async function generateMarketPredictionAction(formData: FormData) {
   const prompt = `
     You are an expert B2B agricultural trading AI for "Bozor-Analitika" in Uzbekistan.
     The buyer is asking for market intelligence regarding: "${query}".
+
+    Simulate a highly detailed, realistic-sounding market analysis. Act as if you have access to 
+    live historical pricing, global market trends, and real-time agricultural news.
+    Do not mention that you are simulating this data; present it as a factual, complex trading analysis.
     
-    Current market sample data (UZS):
-    ${JSON.stringify(recentListings, null, 2)}
+    You must include:
+    1. A summary of recent historical price trends (simulate realistic numbers).
+    2. A brief mention of relevant market news (e.g. weather conditions, export bans, or harvest yields).
+    3. A definitive "prediction_signal" which MUST be exactly one of: "BUY_NOW", "HOLD", or "BUY_LATER".
+    4. A definitive prediction on whether the user should BUY MORE or BUY LESS.
     
-    Provide a highly detailed "Trading Market Style" report. Include:
-    1. Historical context and simulated recent news affecting this product in Uzbekistan (e.g. weather, export bans, fuel prices).
-    2. A definitive "prediction_signal" which MUST be exactly one of: "BUY_NOW", "HOLD", or "BUY_LATER".
-    3. Volume recommendation: Should they buy more now to stockpile, or buy less?
+    Write your analysis in Uzbek. Be professional, analytical, and structured.
     
     Return exactly a JSON object with this schema:
     {
