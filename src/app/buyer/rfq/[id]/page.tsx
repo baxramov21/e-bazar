@@ -36,7 +36,7 @@ export default async function RfqDetailPage({ params }: { params: any }) {
   }
 
   return (
-    <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 800 }}>
+    <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 1000 }}>
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
         <div>
@@ -85,36 +85,41 @@ export default async function RfqDetailPage({ params }: { params: any }) {
         <div>
           <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16 }}>Tavsiya etilgan takliflar</h2>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 24 }}>
             {matches.map((match: any, index: number) => (
-              <div key={match.id} className="card hover-glow" style={{ position: "relative", overflow: "hidden" }}>
+              <div key={match.id} className="card hover-glow" style={{ position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 {index === 0 && (
                   <div style={{ position: "absolute", top: 0, right: 0, background: "var(--color-success)", color: "white", padding: "4px 12px", fontSize: "0.75rem", fontWeight: 700, borderBottomLeftRadius: "var(--radius-md)" }}>
                     Eng yaxshi moslik
                   </div>
                 )}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
-                      {match.supplier?.company_name}
-                    </h3>
-                    <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: 4 }}>
-                      Reyting: {match.supplier?.trust_score}/5 • {match.listing?.delivery_days} kunda yetkaziladi
-                    </div>
+                
+                <div style={{ marginBottom: 16 }}>
+                  <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--color-text-primary)" }}>
+                    {match.supplier?.company_name}
+                  </h3>
+                  <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: 4 }}>
+                    Reyting: {match.supplier?.trust_score}/5 • {match.listing?.delivery_days} kunda yetkaziladi
                   </div>
-                  <div style={{ textAlign: "right" }}>
+                </div>
+                
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16, marginTop: "auto" }}>
+                  <div>
+                    <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", marginBottom: 2 }}>Taklif narxi:</div>
                     <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-accent-light)" }}>
                       {Number(match.listing?.price_per_unit).toLocaleString()} UZS
                     </div>
-                    <div style={{ fontSize: "0.85rem", color: "var(--color-success)", fontWeight: 600 }}>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div className="badge badge-success" style={{ fontWeight: 700, padding: "6px 12px" }}>
                       Moslik: {Math.round(match.score_total * 100)}%
                     </div>
                   </div>
                 </div>
                 
-                <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px dashed var(--color-border)", display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ paddingTop: 16, borderTop: "1px dashed var(--color-border)" }}>
                   <form action={selectOfferAction.bind(null, match.id, rfq.id)}>
-                    <button type="submit" className="btn btn-primary">Shu taklifni tanlash</button>
+                    <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>Shu taklifni tanlash</button>
                   </form>
                 </div>
               </div>
