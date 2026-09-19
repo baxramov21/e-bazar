@@ -6,8 +6,6 @@ import { GoogleGenAI } from "@google/genai";
 import { redirect } from "next/navigation";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "missing" });
-
 export async function generateMarketPredictionAction(formData: FormData) {
   const query = formData.get("query") as string;
   if (!query) return;
@@ -47,6 +45,7 @@ export async function generateMarketPredictionAction(formData: FormData) {
   `;
 
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3.5-flash',
       contents: prompt,
