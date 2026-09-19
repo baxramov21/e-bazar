@@ -87,6 +87,26 @@ export default function MakeOfferPage({ params }: { params: any }) {
           </div>
 
           <div style={{ marginTop: 12 }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 8 }}>O'zaro Kelishuv Shartlari (Oferta)</h3>
+            <div style={{ 
+              background: "var(--color-bg-elevated)", 
+              padding: "16px", 
+              borderRadius: "var(--radius-md)", 
+              fontSize: "0.85rem", 
+              color: "var(--color-text-secondary)",
+              maxHeight: 120,
+              overflowY: "auto",
+              lineHeight: 1.6,
+              marginBottom: 16
+            }}>
+              Ushbu shartnoma elektron tarzda tuzilgan bo'lib, tomonlar o'rtasida yuridik kuchga ega. Xaridor ko'rsatilgan miqdordagi mahsulotni kelishilgan narxda sotib olish majburiyatini, Sotuvchi esa mahsulotni o'z vaqtida va belgilangan sifatda yetkazib berish majburiyatini oladi. Tomonlar O'zbekiston Respublikasi qonunchiligiga muvofiq javobgar hisoblanadilar. Taklif yuborish orqali siz ushbu shartlarni qabul qilasiz.
+            </div>
+            
+            <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", marginBottom: 24 }}>
+              <input type="checkbox" name="accept_terms" required style={{ width: 18, height: 18, accentColor: "var(--color-accent)" }} />
+              <span style={{ fontSize: "0.95rem", fontWeight: 500 }}>Men kelishuv shartlari bilan tanishdim va rozi bo'laman</span>
+            </label>
+
             <SubmitButton />
           </div>
         </form>

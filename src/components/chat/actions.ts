@@ -36,3 +36,32 @@ export async function sendChatMessageAction(prevState: any, formData: FormData) 
   revalidatePath(`/${role}/chats/${order_id}`);
   return { success: true };
 }
+
+export async function acceptOfferAction(formData: FormData) {
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  
+  const order_id = formData.get("order_id") as string;
+  const accept_terms = formData.get("accept_terms") as string;
+
+  if (!order_id || accept_terms !== "on") {
+    console.error("Kelishuv shartlariga rozi bo'lishingiz shart.");
+    return;
+  }
+
+  const { error } = await supabase.from("orders").update({ status: "confirmed" }).eq("id", order_id);
+
+  if (error) {
+    console.error("Accept offer error:", error);
+    return;
+  }
+
+  // Also add a system message saying the offer was accepted
+  await supabase.from("chat_messages").insert({
+    order_id,
+    sender_id: "22222222-2222-2222-2222-222222222222", // Use the mock supplier ID for MVP
+    content: "✅ Sotuvchi taklifingizni va kelishuv shartlarini qabul qildi!"
+  });
+
+  revalidatePath(`/supplier/chats/${order_id}`);
+  revalidatePath(`/buyer/chats/${order_id}`);
+}

@@ -18,9 +18,10 @@ export async function submitOfferAction(prevState: any, formData: FormData) {
   const message = formData.get("message") as string;
   const unit = formData.get("unit") as string;
   const delivery_address = formData.get("delivery_address") as string;
+  const accept_terms = formData.get("accept_terms") as string;
 
-  if (!quantity || !price_per_unit || !message || !delivery_address) {
-    return { error: "Barcha maydonlarni to'ldirish shart." };
+  if (!quantity || !price_per_unit || !message || !delivery_address || accept_terms !== "on") {
+    return { error: "Barcha maydonlarni to'ldirish va shartlarga rozi bo'lish shart." };
   }
 
   // 1. Create the pending order

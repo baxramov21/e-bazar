@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
-import { sendChatMessageAction } from "./actions";
+import { sendChatMessageAction, acceptOfferAction } from "./actions";
 import { Send } from "lucide-react";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
@@ -94,6 +94,38 @@ export default function ChatUI({
         })}
         <div ref={bottomRef} />
       </div>
+
+      {/* Accept Offer Action Box for Supplier */}
+      {role === "supplier" && order.status === "pending" && (
+        <div style={{ padding: "20px 24px", background: "var(--color-bg-elevated)", borderTop: "1px solid var(--color-border)" }}>
+          <form action={acceptOfferAction} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <input type="hidden" name="order_id" value={order.id} />
+            <h3 style={{ fontSize: "1rem", fontWeight: 700 }}>O'zaro Kelishuv Shartlari (Oferta)</h3>
+            <div style={{ 
+              background: "var(--color-bg-surface)", 
+              padding: "16px", 
+              borderRadius: "var(--radius-md)", 
+              fontSize: "0.85rem", 
+              color: "var(--color-text-secondary)",
+              maxHeight: 120,
+              overflowY: "auto",
+              lineHeight: 1.6,
+              border: "1px solid var(--color-border)"
+            }}>
+              Ushbu shartnoma elektron tarzda tuzilgan bo'lib, tomonlar o'rtasida yuridik kuchga ega. Xaridor ko'rsatilgan miqdordagi mahsulotni kelishilgan narxda sotib olish majburiyatini, Sotuvchi esa mahsulotni o'z vaqtida va belgilangan sifatda yetkazib berish majburiyatini oladi. Tomonlar O'zbekiston Respublikasi qonunchiligiga muvofiq javobgar hisoblanadilar. Taklifni qabul qilish orqali siz ushbu shartlarni qabul qilasiz.
+            </div>
+            
+            <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+              <input type="checkbox" name="accept_terms" required style={{ width: 18, height: 18, accentColor: "var(--color-supplier)" }} />
+              <span style={{ fontSize: "0.95rem", fontWeight: 500 }}>Men kelishuv shartlari bilan tanishdim va rozi bo'laman</span>
+            </label>
+
+            <button type="submit" className="btn btn-primary" style={{ background: "var(--color-supplier)", marginTop: 8, height: 44 }}>
+              Shartlarga rozi bo'lish va Taklifni Qabul Qilish
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Input Area */}
       <div style={{ padding: "20px 24px", background: "var(--color-bg-surface)", borderTop: "1px solid var(--color-border)" }}>
