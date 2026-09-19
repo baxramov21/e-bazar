@@ -69,7 +69,7 @@ export default function AnalyticsPage() {
       
       const res = await generatePricePredictionAction(formData);
       if (res?.success) {
-        setAnalysis(res.analysis);
+        setAnalysis(res.analysis || null);
       } else {
         setAnalysis("Tahlil yaratishda xatolik yuz berdi: " + res?.error);
       }
