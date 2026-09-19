@@ -82,7 +82,7 @@ async function getOrCreateSupplier() {
 }
 
 async function seed() {
-  console.log("Generating 2,000 market products...");
+  console.log("Generating 3,000 market products...");
   
   const supplierId = await getOrCreateSupplier();
   if (!supplierId) {
@@ -93,7 +93,7 @@ async function seed() {
   const batchSize = 500;
   let totalInserted = 0;
 
-  for (let batch = 0; batch < 4; batch++) {
+  for (let batch = 0; batch < 6; batch++) {
     const listings = [];
     for (let i = 0; i < batchSize; i++) {
       const baseProduct = getRandomItem(productsData);
