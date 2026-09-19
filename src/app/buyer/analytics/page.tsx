@@ -3,7 +3,12 @@
 import { useState } from "react";
 import BackButton from "@/components/BackButton";
 import { HistoricalPriceChart } from "@/components/DashboardCharts";
-import { Bot, MapPin, Package, Calendar } from "lucide-react";
+import { Bot, MapPin, Package, Calendar, Send, User } from "lucide-react";
+
+type Message = {
+  role: 'user' | 'assistant';
+  content: string;
+};
 
 const timeframes = [
   { id: "daily", name: "Kunlik (30 kun)" },
@@ -74,31 +79,36 @@ export default function AnalyticsPage() {
   const [chartData, setChartData] = useState(() => generateMockData(products[0].basePrice, products[0].volatility, timeframes[2].id));
   
   const [isGenerating, setIsGenerating] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatInput, setChatInput] = useState("");
 
   const handleProductChange = (e: any) => {
     const p = products.find(p => p.id === e.target.value) || products[0];
     setSelectedProduct(p);
     setChartData(generateMockData(p.basePrice, p.volatility, selectedTimeframe));
-    setAnalysis(null);
+    setMessages([]);
   };
 
   const handleRegionChange = (e: any) => {
     setSelectedRegion(e.target.value);
     setChartData(generateMockData(selectedProduct.basePrice, selectedProduct.volatility, selectedTimeframe));
-    setAnalysis(null);
+    setMessages([]);
   };
 
   const handleTimeframeChange = (e: any) => {
     const tf = e.target.value;
     setSelectedTimeframe(tf);
     setChartData(generateMockData(selectedProduct.basePrice, selectedProduct.volatility, tf));
-    setAnalysis(null);
+    setMessages([]);
   };
 
-  const handleGenerateAnalysis = async () => {
+  const sendMessage = async (userText: string) => {
+    if (!userText.trim()) return;
+
+    const newMessages: Message[] = [...messages, { role: 'user', content: userText }];
+    setMessages(newMessages);
+    setChatInput("");
     setIsGenerating(true);
-    setAnalysis("");
 
     try {
       const res = await fetch("/api/predict", {
@@ -108,15 +118,15 @@ export default function AnalyticsPage() {
           product: selectedProduct.name,
           region: selectedRegion,
           timeframe: timeframes.find(t => t.id === selectedTimeframe)?.name || "Oylik",
-          historicalData: JSON.stringify(chartData)
+          historicalData: JSON.stringify(chartData),
+          messages: newMessages
         })
       });
 
-      if (!res.ok) {
-        throw new Error("Tarmoq xatosi yuz berdi.");
-      }
-      
+      if (!res.ok) throw new Error("Tarmoq xatosi yuz berdi.");
       if (!res.body) throw new Error("Javob olinmadi");
+
+      setMessages((prev) => [...prev, { role: 'assistant', content: "" }]);
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -127,14 +137,23 @@ export default function AnalyticsPage() {
         done = doneReading;
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
-          setAnalysis((prev) => (prev || "") + chunk);
+          setMessages((prev) => {
+            const updated = [...prev];
+            const lastIndex = updated.length - 1;
+            updated[lastIndex] = { ...updated[lastIndex], content: updated[lastIndex].content + chunk };
+            return updated;
+          });
         }
       }
     } catch (err: any) {
-      setAnalysis("Tahlil yaratishda xatolik yuz berdi: " + err.message);
+      setMessages((prev) => [...prev, { role: 'assistant', content: "Xatolik yuz berdi: " + err.message }]);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleStartAnalysis = () => {
+    sendMessage("Iltimos, ushbu ma'lumotlarni tahlil qiling va kelajakdagi o'zgarishlarni prognoz qiling.");
   };
 
   return (
@@ -220,10 +239,10 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {!analysis && !isGenerating ? (
+        {messages.length === 0 && !isGenerating ? (
           <div style={{ textAlign: "center", padding: "40px 0" }}>
             <button 
-              onClick={handleGenerateAnalysis} 
+              onClick={handleStartAnalysis} 
               disabled={isGenerating}
               className="btn btn-primary"
               style={{ padding: "12px 24px", fontSize: "1rem" }}
@@ -232,29 +251,82 @@ export default function AnalyticsPage() {
             </button>
           </div>
         ) : (
-          <div className="fade-in" style={{ padding: 24, background: "var(--color-bg-base)", borderRadius: "var(--radius-md)", border: "1px dashed var(--color-accent)" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: "1rem", lineHeight: 1.6, color: "var(--color-text-secondary)", whiteSpace: "pre-wrap" }}>
-              <span>
-                {analysis}
-                {isGenerating && (
-                  <span style={{ 
-                    display: "inline-block", 
-                    width: "8px", 
-                    height: "1em", 
-                    background: "var(--color-accent)", 
-                    verticalAlign: "middle", 
-                    marginLeft: "4px",
-                    animation: "blink-cursor 1s step-end infinite" 
-                  }} />
-                )}
-              </span>
+          <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: 16,
+              maxHeight: "500px",
+              overflowY: "auto",
+              paddingRight: 8
+            }}>
+              {messages.map((msg, idx) => (
+                <div key={idx} style={{
+                  display: "flex",
+                  gap: 12,
+                  alignItems: "flex-start",
+                  flexDirection: msg.role === 'user' ? "row-reverse" : "row"
+                }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: msg.role === 'user' ? "var(--color-bg-hover)" : "linear-gradient(135deg, var(--color-accent), #8b5cf6)"
+                  }}>
+                    {msg.role === 'user' ? <User size={18} color="white" /> : <Bot size={18} color="white" />}
+                  </div>
+                  
+                  <div style={{
+                    background: msg.role === 'user' ? "var(--color-bg-elevated)" : "var(--color-bg-base)",
+                    border: msg.role === 'user' ? "none" : "1px solid var(--color-border)",
+                    padding: "16px 20px",
+                    borderRadius: "var(--radius-md)",
+                    borderTopRightRadius: msg.role === 'user' ? 4 : "var(--radius-md)",
+                    borderTopLeftRadius: msg.role === 'assistant' ? 4 : "var(--radius-md)",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.6,
+                    color: msg.role === 'user' ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+                    maxWidth: "85%",
+                    whiteSpace: "pre-wrap"
+                  }}>
+                    {msg.content}
+                    {isGenerating && idx === messages.length - 1 && msg.role === 'assistant' && (
+                      <span style={{ 
+                        display: "inline-block", 
+                        width: "6px", 
+                        height: "1em", 
+                        background: "var(--color-accent)", 
+                        verticalAlign: "middle", 
+                        marginLeft: "4px",
+                        animation: "blink-cursor 1s step-end infinite" 
+                      }} />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
             
-            {!isGenerating && (
-              <button onClick={() => setAnalysis(null)} className="btn btn-secondary btn-sm" style={{ marginTop: 20 }}>
-                Yangi tahlil
+            <form 
+              onSubmit={(e) => { e.preventDefault(); sendMessage(chatInput); }}
+              style={{ display: "flex", gap: 12, marginTop: 8 }}
+            >
+              <input 
+                type="text" 
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="AI ga savol bering..."
+                className="input"
+                disabled={isGenerating}
+                style={{ flex: 1, border: "1px solid var(--color-border-strong)" }}
+              />
+              <button 
+                type="submit" 
+                disabled={!chatInput.trim() || isGenerating}
+                className="btn btn-primary"
+                style={{ padding: "10px 16px" }}
+              >
+                <Send size={18} />
               </button>
-            )}
+            </form>
           </div>
         )}
       </div>
