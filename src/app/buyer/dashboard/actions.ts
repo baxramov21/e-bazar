@@ -4,8 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { GoogleGenAI } from "@google/genai";
 import { redirect } from "next/navigation";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "missing" });
 
 export async function generateMarketPredictionAction(formData: FormData) {
   const query = formData.get("query") as string;
@@ -57,22 +58,33 @@ export async function generateMarketPredictionAction(formData: FormData) {
     const text = response.text || "{}";
     const prediction = JSON.parse(text);
 
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!, 
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     // 4. Save to buyer_messages table
     if (prediction.title && prediction.content) {
-      await supabase.from("buyer_messages").insert({
+      await supabaseAdmin.from("buyer_messages").insert({
         buyer_id: buyerId,
         title: prediction.title,
         content: prediction.content,
         prediction_signal: prediction.prediction_signal || "HOLD"
       });
     }
-  } catch (error) {
-    console.error("Market Prediction AI failed:", error);
+  } catch (error: any) {
+    console.error("Market Prediction AI failed:", error?.message || error);
+    
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!, 
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     // Fallback if AI fails (e.g. missing API key)
-    await supabase.from("buyer_messages").insert({
+    await supabaseAdmin.from("buyer_messages").insert({
       buyer_id: buyerId,
       title: `${query} bo'yicha tahlil`,
-      content: `API xatosi yuz berdi. Iltimos keyinroq urinib ko'ring yoki .env faylida API kalitni tekshiring.`,
+      content: `API xatosi yuz berdi: ${error?.message || 'Nomaʼlum xato'}. Iltimos keyinroq urinib ko'ring yoki .env faylida GEMINI_API_KEY kalitni tekshiring.`,
       prediction_signal: "HOLD"
     });
   }
