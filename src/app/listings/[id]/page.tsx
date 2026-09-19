@@ -126,9 +126,9 @@ export default async function ListingDetailPage({ params }: { params: any }) {
               Shu mahsulot bo'yicha Xarid So'rovi yaratish
             </Link>
             
-            <button className="btn btn-secondary" style={{ width: "100%", justifyContent: "center", height: 48, marginTop: 12 }}>
-              Sotuvchi bilan bog'lanish (Tez kunda)
-            </button>
+            <Link href={`/listings/${listing.id}/offer`} className="btn btn-secondary" style={{ width: "100%", justifyContent: "center", height: 48, marginTop: 12 }}>
+              Taklif yuborish va Chat qilish
+            </Link>
           </div>
 
         </div>

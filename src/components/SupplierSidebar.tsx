@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Search, ClipboardList, Settings, PlusCircle, CreditCard } from "lucide-react";
+import { LayoutDashboard, Package, Search, ClipboardList, Settings, PlusCircle, CreditCard, MessageSquare } from "lucide-react";
 
 export default function SupplierSidebar() {
   const pathname = usePathname();
@@ -53,6 +53,10 @@ export default function SupplierSidebar() {
         <Link href="/supplier/orders" className={`nav-item ${isActive("/supplier/orders") ? "active" : ""}`}>
           <ClipboardList size={18} />
           Buyurtmalar
+        </Link>
+        <Link href="/supplier/chats" className={`nav-item ${isActive("/supplier/chats") ? "active" : ""}`}>
+          <MessageSquare size={18} />
+          Suhbatlar
         </Link>
         <Link href="/supplier/listings" className={`nav-item ${isActive("/supplier/listings") ? "active" : ""}`}>
           <Package size={18} />
