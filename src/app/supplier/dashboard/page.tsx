@@ -62,8 +62,7 @@ export default async function SupplierDashboard() {
   ];
 
   return (
-    <main style={{ background: "var(--color-bg-base)", minHeight: "100dvh", padding: "40px 24px" }}>
-      <div className="page-container">
+    <main className="fade-in" style={{ background: "var(--color-bg-base)", minHeight: "100dvh", padding: "40px 48px", width: "100%" }}>
 
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
@@ -145,7 +144,6 @@ export default async function SupplierDashboard() {
           <p style={{ fontSize: "15px", fontWeight: 600 }}>Tizim muvaffaqiyatli ishga tushirildi</p>
         </div>
 
-      </div>
     </main>
   );
 }

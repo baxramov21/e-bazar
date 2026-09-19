@@ -18,7 +18,7 @@ export default async function SupplierListingsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="page-container fade-in" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
+    <main className="fade-in" style={{ padding: "40px 48px", minHeight: "100dvh", width: "100%" }}>
       
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
@@ -39,7 +39,9 @@ export default async function SupplierListingsPage() {
       <div style={{ 
         display: "grid", 
         gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", 
-        gap: 24 
+        gap: 24,
+        width: "100%",
+        alignItems: "stretch"
       }}>
         {listings?.map((item: any) => (
           <div key={item.id} className="card hover-glow" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
