@@ -36,7 +36,7 @@ export default async function RfqDetailPage({ params }: { params: any }) {
   }
 
   return (
-    <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 1000 }}>
+    <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
         <div>
@@ -85,7 +85,7 @@ export default async function RfqDetailPage({ params }: { params: any }) {
         <div>
           <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16 }}>Tavsiya etilgan takliflar</h2>
           
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
             {matches.map((match: any, index: number) => (
               <div key={match.id} className="card hover-glow" style={{ position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 {index === 0 && (
