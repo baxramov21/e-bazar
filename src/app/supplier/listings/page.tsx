@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function SupplierListingsPage() {
   const supabase = await createClient();
   

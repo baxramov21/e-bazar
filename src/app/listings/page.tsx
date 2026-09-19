@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import ListingsFilter from "@/components/ListingsFilter";
 
+export const dynamic = "force-dynamic";
+
 export default async function ListingsPage({ searchParams }: { searchParams: Promise<{ q?: string, category?: string }> }) {
   const supabase = await createClient();
   
