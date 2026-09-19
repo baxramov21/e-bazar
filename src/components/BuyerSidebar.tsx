@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MessageSquare, Search, ClipboardList, Settings, PlusCircle } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Search, ClipboardList, Settings, PlusCircle, LineChart } from "lucide-react";
 
 export default function BuyerSidebar() {
   const pathname = usePathname();
@@ -57,6 +57,10 @@ export default function BuyerSidebar() {
         <Link href="/buyer/rfq" className={`nav-item ${isActive("/buyer/rfq") ? "active" : ""}`}>
           <ClipboardList size={18} />
           So'rovlarim
+        </Link>
+        <Link href="/buyer/analytics" className={`nav-item ${isActive("/buyer/analytics") ? "active" : ""}`}>
+          <LineChart size={18} />
+          Bozor Analitikasi
         </Link>
         <Link href="/listings" className="nav-item">
           <Search size={18} />

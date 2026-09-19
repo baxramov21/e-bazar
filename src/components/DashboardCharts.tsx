@@ -11,7 +11,9 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  AreaChart,
+  Area
 } from "recharts";
 
 const COLORS = ["#0052ff", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -109,6 +111,66 @@ export function DashboardPieChart({ data, title }: { data: any[], title: string 
               wrapperStyle={{ fontSize: "13px", color: "var(--color-text-secondary)", paddingTop: 20 }}
             />
           </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+export function HistoricalPriceChart({ data, title }: { data: any[], title: string }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="card" style={{ height: 400, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <p style={{ color: "var(--color-text-muted)" }}>Ma'lumotlar yetarli emas</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card" style={{ height: 400, display: "flex", flexDirection: "column" }}>
+      <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 24 }}>{title}</h3>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+            <defs>
+              <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+            <XAxis 
+              dataKey="date" 
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
+              dy={10}
+            />
+            <YAxis 
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
+              tickFormatter={(value) => {
+                if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+                if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+                return value;
+              }}
+            />
+            <Tooltip 
+              contentStyle={{ borderRadius: 12, border: "none", boxShadow: "var(--shadow-md)" }}
+              labelStyle={{ color: "var(--color-text-secondary)", fontWeight: 600, marginBottom: 4 }}
+              formatter={(value: any) => [`${Number(value).toLocaleString()} UZS`, "Narx"]}
+            />
+            <Area 
+              type="monotone" 
+              dataKey="price" 
+              stroke="var(--color-accent)" 
+              strokeWidth={3}
+              fillOpacity={1} 
+              fill="url(#colorPrice)" 
+              activeDot={{ r: 6, strokeWidth: 0 }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
