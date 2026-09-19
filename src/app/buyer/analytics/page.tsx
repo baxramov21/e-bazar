@@ -288,8 +288,14 @@ export default function AnalyticsPage() {
                     maxWidth: "85%",
                     whiteSpace: "pre-wrap"
                   }}>
-                    {msg.content}
-                    {isGenerating && idx === messages.length - 1 && msg.role === 'assistant' && (
+                    {msg.content === "" && isGenerating && idx === messages.length - 1 ? (
+                      <span style={{ fontStyle: "italic", color: "var(--color-text-muted)" }}>
+                        Aql bilan o'ylamoqda<span className="thinking-dots"></span>
+                      </span>
+                    ) : (
+                      msg.content
+                    )}
+                    {isGenerating && msg.content !== "" && idx === messages.length - 1 && msg.role === 'assistant' && (
                       <span style={{ 
                         display: "inline-block", 
                         width: "6px", 
