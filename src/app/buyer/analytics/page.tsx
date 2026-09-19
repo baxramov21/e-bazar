@@ -233,12 +233,6 @@ export default function AnalyticsPage() {
           </div>
         ) : (
           <div className="fade-in" style={{ padding: 24, background: "var(--color-bg-base)", borderRadius: "var(--radius-md)", border: "1px dashed var(--color-accent)" }}>
-            <style>{`
-              @keyframes blink-cursor {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0; }
-              }
-            `}</style>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: "1rem", lineHeight: 1.6, color: "var(--color-text-secondary)", whiteSpace: "pre-wrap" }}>
               <span>
                 {analysis}
