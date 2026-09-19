@@ -4,6 +4,7 @@ import { useState } from "react";
 import BackButton from "@/components/BackButton";
 import { HistoricalPriceChart } from "@/components/DashboardCharts";
 import { Bot, MapPin, Package, Calendar, Send, User } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -292,6 +293,10 @@ export default function AnalyticsPage() {
                       <span style={{ fontStyle: "italic", color: "var(--color-text-muted)" }}>
                         Aql bilan o'ylamoqda<span className="thinking-dots"></span>
                       </span>
+                    ) : msg.role === 'assistant' ? (
+                      <div className="markdown-content">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
                     ) : (
                       msg.content
                     )}
