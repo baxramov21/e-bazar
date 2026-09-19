@@ -21,14 +21,16 @@ export default async function BuyerMessagesPage() {
     <main className="page-container fade-in" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
       
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ marginBottom: 16 }}>
+          <BackButton fallback="/buyer/dashboard" />
+        </div>
         <div>
           <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Xabarlar (BozorAI)</h1>
           <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
             Sizning kunlik bozor bashoratlari va tahlillaringiz
           </p>
         </div>
-        <BackButton fallback="/buyer/dashboard" />
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
