@@ -6,12 +6,14 @@ export async function generatePricePredictionAction(formData: FormData) {
   const product = formData.get("product") as string;
   const region = formData.get("region") as string;
   const historicalDataStr = formData.get("historicalData") as string;
+  const timeframe = formData.get("timeframe") as string || "Oylik";
   
   if (!product || !region || !historicalDataStr) return { error: "Missing data" };
 
   const prompt = `Siz O'zbekiston Qishloq xo'jaligi bozorining yetakchi analitik sun'iy intellektisiz.
 Foydalanuvchi ${region} hududida ${product} narxlarining o'zgarish tarixini tahlil qilishni so'ramoqda.
-Quyida so'nggi 12 oylik narxlar dinamikasi (UZS) simulyatsiyasi berilgan:
+Vaqt oralig'i filtri: ${timeframe}
+Quyida narxlar dinamikasi (UZS) simulyatsiyasi berilgan:
 ${historicalDataStr}
 
 Ushbu grafik dinamikasini chuqur tahlil qiling va quyidagilarni taqdim eting:
@@ -24,7 +26,7 @@ Javobingizni faqat O'zbek tilida, professional va tushunarli formatda, qisqa abz
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3.5-flash',
       contents: prompt,
     });
     return { success: true, analysis: response.text };

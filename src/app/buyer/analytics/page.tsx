@@ -4,20 +4,50 @@ import { useState, useTransition } from "react";
 import BackButton from "@/components/BackButton";
 import { HistoricalPriceChart } from "@/components/DashboardCharts";
 import { generatePricePredictionAction } from "./actions";
-import { Bot, MapPin, Package } from "lucide-react";
+import { Bot, MapPin, Package, Calendar } from "lucide-react";
+
+const timeframes = [
+  { id: "daily", name: "Kunlik (30 kun)" },
+  { id: "weekly", name: "Haftalik (12 hafta)" },
+  { id: "monthly", name: "Oylik (1 yil)" },
+  { id: "yearly", name: "Yillik (5 yil)" },
+  { id: "yoy", name: "O'tgan yilning shu vaqti" },
+];
 
 // Mock data generators
-const generateMockData = (basePrice: number, volatility: number) => {
+const generateMockData = (basePrice: number, volatility: number, timeframe: string) => {
   const data = [];
-  const months = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"];
   let currentPrice = basePrice;
+  let dataPoints = 12;
+  let labels: string[] = [];
+
+  if (timeframe === "daily") {
+    dataPoints = 30;
+    for (let i = 30; i > 0; i--) labels.push(`Kun ${31-i}`);
+    volatility = volatility * 0.3; 
+  } else if (timeframe === "weekly") {
+    dataPoints = 12;
+    for (let i = 12; i > 0; i--) labels.push(`Hafta ${13-i}`);
+    volatility = volatility * 0.6;
+  } else if (timeframe === "yearly") {
+    dataPoints = 5;
+    const currentYear = new Date().getFullYear();
+    for (let i = 4; i >= 0; i--) labels.push(`${currentYear - i}`);
+    volatility = volatility * 1.5;
+  } else if (timeframe === "yoy") {
+    dataPoints = 12;
+    labels = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"];
+    currentPrice = basePrice * 0.85; 
+  } else {
+    dataPoints = 12;
+    labels = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"];
+  }
   
-  for (let i = 0; i < 12; i++) {
-    // Random walk with trend
+  for (let i = 0; i < dataPoints; i++) {
     const change = (Math.random() - 0.4) * volatility;
     currentPrice = currentPrice + (currentPrice * change);
     data.push({
-      date: months[i],
+      date: labels[i],
       price: Math.round(currentPrice / 100) * 100
     });
   }
@@ -40,9 +70,9 @@ const regions = [
 export default function AnalyticsPage() {
   const [selectedProduct, setSelectedProduct] = useState(products[0]);
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
-  // Use a predictable initial state to avoid hydration mismatch, then update in useEffect if needed, 
-  // but since we want dynamic random charts, we can just let it render client-side.
-  const [chartData, setChartData] = useState(() => generateMockData(products[0].basePrice, products[0].volatility));
+  const [selectedTimeframe, setSelectedTimeframe] = useState(timeframes[2].id);
+  
+  const [chartData, setChartData] = useState(() => generateMockData(products[0].basePrice, products[0].volatility, timeframes[2].id));
   
   const [isPending, startTransition] = useTransition();
   const [analysis, setAnalysis] = useState<string | null>(null);
@@ -50,13 +80,20 @@ export default function AnalyticsPage() {
   const handleProductChange = (e: any) => {
     const p = products.find(p => p.id === e.target.value) || products[0];
     setSelectedProduct(p);
-    setChartData(generateMockData(p.basePrice, p.volatility));
+    setChartData(generateMockData(p.basePrice, p.volatility, selectedTimeframe));
     setAnalysis(null);
   };
 
   const handleRegionChange = (e: any) => {
     setSelectedRegion(e.target.value);
-    setChartData(generateMockData(selectedProduct.basePrice, selectedProduct.volatility));
+    setChartData(generateMockData(selectedProduct.basePrice, selectedProduct.volatility, selectedTimeframe));
+    setAnalysis(null);
+  };
+
+  const handleTimeframeChange = (e: any) => {
+    const tf = e.target.value;
+    setSelectedTimeframe(tf);
+    setChartData(generateMockData(selectedProduct.basePrice, selectedProduct.volatility, tf));
     setAnalysis(null);
   };
 
@@ -65,6 +102,7 @@ export default function AnalyticsPage() {
       const formData = new FormData();
       formData.append("product", selectedProduct.name);
       formData.append("region", selectedRegion);
+      formData.append("timeframe", timeframes.find(t => t.id === selectedTimeframe)?.name || "Oylik");
       formData.append("historicalData", JSON.stringify(chartData));
       
       const res = await generatePricePredictionAction(formData);
@@ -119,6 +157,21 @@ export default function AnalyticsPage() {
           >
             {regions.map(r => (
               <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.9rem", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 8 }}>
+            <Calendar size={16} /> Vaqt oralig'i
+          </label>
+          <select 
+            value={selectedTimeframe} 
+            onChange={handleTimeframeChange}
+            className="input-field" 
+            style={{ width: "100%", background: "var(--color-bg-base)" }}
+          >
+            {timeframes.map(t => (
+              <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
         </div>
