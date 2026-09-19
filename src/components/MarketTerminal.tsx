@@ -131,7 +131,7 @@ export default function MarketTerminal() {
         });
 
         // Add Order to Book
-        const newOrder = {
+        const newOrder: Order = {
           id: Math.random().toString(36).substr(2, 9),
           time: new Date().toLocaleTimeString(),
           type: isBuy ? 'buy' : 'sell',
