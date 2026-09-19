@@ -1,139 +1,115 @@
-"use client";
+import { createClient } from "@/lib/supabase/server";
+import BackButton from "@/components/BackButton";
+import { User, ShieldCheck, Star, Briefcase } from "lucide-react";
 
-import { useActionState, useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
-import { updateProfileAction, type ProfileState } from "./actions";
-import { createClient } from "@/lib/supabase/client";
+export default async function UserProfilePage() {
+  const supabase = await createClient();
+  
+  // Temporary mock ID to bypass auth for MVP
+  const mockBuyerId = "11111111-1111-1111-1111-111111111111"; 
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", mockBuyerId).single();
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="btn btn-primary"
-    >
-      {pending ? "Saqlanmoqda..." : "Saqlash"}
-    </button>
-  );
-}
-
-const REGIONS = [
-  "Toshkent shahri", "Toshkent viloyati", "Andijon", "Buxoro", "Farg'ona", "Jizzax", 
-  "Xorazm", "Namangan", "Navoiy", "Qashqadaryo", "Qoraqalpog'iston", "Samarqand", 
-  "Sirdaryo", "Surxondaryo"
-];
-
-export default function ProfileSettingsPage() {
-  const [profile, setProfile] = useState<any>({
-    full_name: "Test Foydalanuvchi",
-    role: "supplier",
-    company_name: "Test MChJ",
-    region: "Toshkent shahri",
-    address: "Amir Temur ko'chasi, 1-uy",
-    tin: "123456789"
-  });
-  const [loading, setLoading] = useState(false);
-
-  const initialState: ProfileState = {};
-  const [state, action] = useActionState(updateProfileAction, initialState);
+  const userProfile = profile || {
+    full_name: "Nazar Usmon",
+    company_name: "Baraka Savdo MChJ",
+    region: "Samarqand",
+    address: "Urgut bozori",
+    role: "buyer",
+    kyb_status: "verified",
+    trust_score: 4.8
+  };
 
   return (
-    <main className="page-container fade-in" style={{ padding: "40px 24px", maxWidth: 800 }}>
+    <main className="page-container fade-in" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
       
+      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>Profil sozlamalari</h1>
-          <p style={{ color: "var(--color-text-muted)" }}>Shaxsiy va kompaniya ma&apos;lumotlarini tahrirlash</p>
+          <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Mening Profilim</h1>
+          <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
+            Shaxsiy ma'lumotlar va kompaniya rekvizitlari
+          </p>
         </div>
-        <a 
-          href={profile.role === "supplier" ? "/supplier/dashboard" : "/buyer/dashboard"} 
-          className="btn btn-secondary btn-sm"
-        >
-          Orqaga
-        </a>
+        <BackButton fallback="/buyer/dashboard" />
       </div>
 
-      <div className="card">
-        <form action={action} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 24 }}>
+        
+        {/* Sidebar / Identity */}
+        <div className="card" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "40px 24px" }}>
+          <div style={{ 
+            width: 100, height: 100, borderRadius: "50%", 
+            background: "linear-gradient(135deg, var(--color-accent), #8b5cf6)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            marginBottom: 16
+          }}>
+            <User size={48} color="white" />
+          </div>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 800, marginBottom: 4 }}>{userProfile.full_name}</h2>
+          <p style={{ color: "var(--color-text-secondary)", marginBottom: 16 }}>{userProfile.company_name}</p>
           
-          {state?.success && (
-            <div style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: "var(--radius-lg)", padding: "12px 16px", color: "var(--color-success)" }}>
-              Ma&apos;lumotlar muvaffaqiyatli saqlandi!
-            </div>
-          )}
-
-          {state?.errors?.general && (
-            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "var(--radius-lg)", padding: "12px 16px", color: "var(--color-danger)" }}>
-              {state.errors.general[0]}
-            </div>
-          )}
-
-          <div>
-            <label className="input-label" htmlFor="full_name">To&apos;liq ism</label>
-            <input 
-              id="full_name" name="full_name" type="text" 
-              defaultValue={profile.full_name} 
-              className="input" 
-            />
-            {state?.errors?.full_name && <p style={{ color: "var(--color-danger)", fontSize: "12px", marginTop: 4 }}>{state.errors.full_name[0]}</p>}
+          <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+            <span className="badge badge-buyer" style={{ textTransform: "capitalize" }}>{userProfile.role}</span>
+            {userProfile.kyb_status === "verified" && (
+              <span className="badge" style={{ background: "rgba(16,185,129,0.1)", color: "var(--color-success)", display: "flex", alignItems: "center", gap: 4 }}>
+                <ShieldCheck size={14} />
+                Tasdiqlangan
+              </span>
+            )}
           </div>
 
-          <div>
-            <label className="input-label" htmlFor="company_name">Kompaniya nomi</label>
-            <input 
-              id="company_name" name="company_name" type="text" 
-              defaultValue={profile.company_name || ""} 
-              className="input" 
-              placeholder="MChJ / YaTT nomi"
-            />
+          <div style={{ width: "100%", padding: 16, background: "var(--color-bg-base)", borderRadius: "var(--radius-md)", border: "1px solid var(--color-border)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <span style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>Ishonch reytingi (Trust Score)</span>
+              <span style={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
+                <Star size={14} color="#f59e0b" fill="#f59e0b" />
+                {userProfile.trust_score}/5.0
+              </span>
+            </div>
+            <div style={{ height: 6, width: "100%", background: "var(--color-border)", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${(userProfile.trust_score / 5) * 100}%`, background: "var(--color-accent)" }}></div>
+            </div>
           </div>
+        </div>
 
+        {/* Details Form */}
+        <div className="card">
+          <h3 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 8 }}>
+            <Briefcase size={20} color="var(--color-text-muted)" />
+            Kompaniya ma'lumotlari
+          </h3>
+          
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
-              <label className="input-label" htmlFor="region">Hudud</label>
-              <select 
-                id="region" name="region" 
-                defaultValue={profile.region || ""} 
-                className="input"
-              >
-                <option value="">Tanlang...</option>
-                {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+              <label className="input-label">To'liq ism-sharif</label>
+              <input type="text" className="input-field" defaultValue={userProfile.full_name} disabled />
             </div>
-
             <div>
-              <label className="input-label" htmlFor="address">To&apos;liq manzil</label>
-              <input 
-                id="address" name="address" type="text" 
-                defaultValue={profile.address || ""} 
-                className="input" 
-              />
+              <label className="input-label">Kompaniya nomi</label>
+              <input type="text" className="input-field" defaultValue={userProfile.company_name} disabled />
+            </div>
+            <div>
+              <label className="input-label">Hudud</label>
+              <input type="text" className="input-field" defaultValue={userProfile.region} disabled />
+            </div>
+            <div>
+              <label className="input-label">Manzil</label>
+              <input type="text" className="input-field" defaultValue={userProfile.address} disabled />
+            </div>
+            <div>
+              <label className="input-label">Rol</label>
+              <input type="text" className="input-field" defaultValue={userProfile.role === 'buyer' ? 'Xaridor' : 'Yetkazib beruvchi'} disabled />
             </div>
           </div>
-
-          {profile.role === "supplier" && (
-            <div>
-              <label className="input-label">STIR / INN (Soliq to&apos;lovchi raqami)</label>
-              <input 
-                type="text" 
-                value={profile.tin || ""} 
-                disabled 
-                className="input" 
-                style={{ opacity: 0.6 }}
-              />
-              <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: 4 }}>
-                STIRni o&apos;zgartirish uchun admin bilan bog&apos;laning. Yoki KYB bo&apos;limiga kiring.
-              </p>
-            </div>
-          )}
-
-          <div style={{ marginTop: 12, display: "flex", justifyContent: "flex-end" }}>
-            <SubmitButton />
+          
+          <div style={{ marginTop: 32, paddingTop: 24, borderTop: "1px solid var(--color-border)", display: "flex", justifyContent: "flex-end" }}>
+            <button className="btn btn-primary" disabled>
+              Saqlash (Tez kunda)
+            </button>
           </div>
-        </form>
+        </div>
+
       </div>
-
     </main>
   );
 }

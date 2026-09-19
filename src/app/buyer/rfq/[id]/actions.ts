@@ -69,9 +69,20 @@ export async function runAiMatchingAction(rfqId: string) {
     if (fallbackListings) listingsData = fallbackListings;
   }
 
-  // 3. Ask Gemini to evaluate and score
+  // 3. Fetch buyer's trading history (past purchases & ratings)
+  const { data: pastOrders } = await supabase
+    .from("orders")
+    .select("quantity, unit, supplier_id, listings(title), ratings!ratings_order_id_fkey(score)")
+    .eq("buyer_id", rfq.buyer_id)
+    .eq("status", "completed");
+
+  const historySummaries = pastOrders?.map(order => 
+    `Bought ${order.quantity} ${order.unit} of "${(order.listings as any)?.title}" from Supplier (ID: ${order.supplier_id}). Rating given to supplier: ${(order.ratings as any)?.[0]?.score || "None"}/5.`
+  ).join("\n- ") || "No historical purchases.";
+
+  // 4. Ask Gemini to evaluate and score
   const prompt = `
-    You are an expert B2B procurement AI. Evaluate the following supplier listings against the buyer's RFQ.
+    You are an expert B2B procurement AI for "Bozor-Analitika". Evaluate the following supplier listings against the buyer's RFQ.
     
     Buyer RFQ:
     - Title: ${rfq.title}
@@ -80,6 +91,10 @@ export async function runAiMatchingAction(rfqId: string) {
     - Destination: ${rfq.destination_region}
     - Urgency: ${rfq.urgency_level}
     - Description: ${rfq.description || 'N/A'}
+    
+    Buyer Trading History (Context):
+    - ${historySummaries}
+    (Use this history to favor suppliers the buyer has bought from before and rated highly, or penalize if rated poorly.)
     
     Supplier Listings:
     ${JSON.stringify(listingsData.map((l: any) => ({
