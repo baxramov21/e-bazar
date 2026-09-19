@@ -21,8 +21,8 @@ export default async function BuyerMessagesPage() {
     <main className="page-container fade-in" style={{ padding: "40px 24px", minHeight: "100dvh" }}>
       
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 32 }}>
+        <div style={{ marginTop: 6 }}>
           <BackButton fallback="/buyer/dashboard" />
         </div>
         <div>
