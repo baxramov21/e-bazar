@@ -87,7 +87,7 @@ export default function RegisterPage() {
             </svg>
           </div>
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: 8 }}>
-            Bozor-Analitika
+            e-Bozor
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
             Platformaga kirish uchun ma&apos;lumotlaringizni kiriting

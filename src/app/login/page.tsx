@@ -28,7 +28,7 @@ export default function LoginPage() {
           </div>
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>Tizimga kirish</h1>
           <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
-            Bozor-Analitika platformasiga xush kelibsiz
+            e-Bozor platformasiga xush kelibsiz
           </p>
         </div>
 

@@ -8,7 +8,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Bozor-Analitika | B2B Savdo Platformasi",
+  title: "e-Bozor | B2B Savdo Platformasi",
   description:
     "Uzbekiston uchun sun'iy intellekt asosidagi B2B savdo tahlili va buyurtma moslashtirish platformasi.",
   keywords: ["b2b", "savdo", "uzbekistan", "bozor", "analitika", "supplier"],

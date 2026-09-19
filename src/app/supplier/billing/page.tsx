@@ -24,7 +24,7 @@ export default async function SupplierBillingPage() {
         <div>
           <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Moliya va Hisob-kitoblar</h1>
           <p style={{ color: "var(--color-text-muted)", marginTop: 4 }}>
-            Bozor-Analitika platformasi orqali sotilgan mahsulotlar va komissiya to'lovlari
+            e-Bozor platformasi orqali sotilgan mahsulotlar va komissiya to'lovlari
           </p>
         </div>
         <Link href="/supplier/dashboard" className="btn btn-secondary">Orqaga</Link>

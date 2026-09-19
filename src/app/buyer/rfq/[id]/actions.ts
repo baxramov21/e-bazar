@@ -80,7 +80,7 @@ export async function runAiMatchingAction(rfqId: string) {
 
   // 4. Ask Gemini to evaluate and score
   const prompt = `
-    You are an expert B2B procurement AI for "Bozor-Analitika". Evaluate the following supplier listings against the buyer's RFQ.
+    You are an expert B2B procurement AI for "e-Bozor". Evaluate the following supplier listings against the buyer's RFQ.
     
     Buyer RFQ:
     - Title: ${rfq.title}

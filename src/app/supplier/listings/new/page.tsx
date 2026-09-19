@@ -41,7 +41,7 @@ export default function NewListingPage() {
             <input id="title" name="title" type="text" className="input" placeholder="Masalan: 10 tonna pomidor" required />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
             <div>
               <label className="input-label" htmlFor="category">Kategoriya</label>
               <select id="category" name="category" className="input" required>
@@ -51,6 +51,17 @@ export default function NewListingPage() {
                 <option value="Sanoat">Sanoat</option>
                 <option value="Qurilish">Qurilish</option>
                 <option value="Oziq-ovqat">Oziq-ovqat</option>
+              </select>
+            </div>
+            <div>
+              <label className="input-label" htmlFor="location_region">Hudud (Yuklash)</label>
+              <select id="location_region" name="location_region" className="input" required>
+                <option value="">Tanlang...</option>
+                <option value="Toshkent shahri">Toshkent shahri</option>
+                <option value="Toshkent viloyati">Toshkent viloyati</option>
+                <option value="Samarqand">Samarqand</option>
+                <option value="Farg'ona">Farg'ona</option>
+                <option value="Navoiy">Navoiy</option>
               </select>
             </div>
             <div>

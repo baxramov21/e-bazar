@@ -29,7 +29,7 @@ export default function BuyerSidebar() {
       {/* Logo */}
       <div style={{ padding: "0 12px", marginBottom: 40 }}>
         <h2 style={{ fontSize: "1.5rem", fontWeight: 800, background: "linear-gradient(135deg, var(--color-accent-light), #a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-          Bozor-Analitika
+          e-Bozor
         </h2>
         <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>
           Xaridor paneli

@@ -25,7 +25,7 @@ export default function HomePage() {
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
-          <span style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "0.02em" }}>Bozor-Analitika</span>
+          <span style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "0.02em" }}>e-Bozor</span>
         </div>
         <div style={{ display: "flex", gap: 16 }}>
           <Link href="/buyer/dashboard" className="btn btn-ghost">Xaridor (Dev)</Link>

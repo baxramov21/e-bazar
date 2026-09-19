@@ -18,8 +18,9 @@ export async function createListingAction(prevState: any, formData: FormData) {
   const moq = Number(formData.get("moq"));
   const unit = formData.get("unit") as string;
   const delivery_days = Number(formData.get("delivery_days"));
+  const location_region = formData.get("location_region") as string;
 
-  if (!title || !category || !price_per_unit || !currency || !available_quantity || !moq || !unit) {
+  if (!title || !category || !price_per_unit || !currency || !available_quantity || !moq || !unit || !location_region) {
     return { error: "Iltimos, barcha majburiy maydonlarni to'ldiring." };
   }
 
@@ -33,6 +34,7 @@ export async function createListingAction(prevState: any, formData: FormData) {
     moq,
     unit,
     delivery_days,
+    location_region,
     is_active: true
   });
 
