@@ -48,5 +48,5 @@ export async function submitOfferAction(prevState: any, formData: FormData) {
   });
 
   // Redirect to the newly created chat room
-  redirect(`/chats/${order.id}`);
+  redirect(`/buyer/chats/${order.id}`);
 }
