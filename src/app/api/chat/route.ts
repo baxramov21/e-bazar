@@ -43,8 +43,8 @@ export async function POST(req: Request) {
 
     const call = response.functionCalls?.[0];
     
-    if (call && call.name === 'search_market') {
-      const args = call.args;
+    if (call && call.name === 'search_market' && call.args) {
+      const args = call.args as Record<string, any>;
       
       // We take the first word of the product name for a broader search (e.g., "Kartoshka (Oq)" -> "Kartoshka")
       const searchTerm = (args.product_name as string).split(' ')[0];
