@@ -33,6 +33,9 @@ export default function ChatUI({
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (state?.success) {
+      formRef.current?.reset();
+    }
   }, [messages, state]);
 
   const partnerName = role === "buyer" 
@@ -96,10 +99,7 @@ export default function ChatUI({
       <div style={{ padding: "20px 24px", background: "var(--color-bg-surface)", borderTop: "1px solid var(--color-border)" }}>
         <form 
           ref={formRef}
-          action={(formData) => {
-            action(formData);
-            formRef.current?.reset();
-          }} 
+          action={action} 
           style={{ display: "flex", gap: 12 }}
         >
           <input type="hidden" name="order_id" value={order.id} />

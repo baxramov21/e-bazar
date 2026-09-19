@@ -1,10 +1,10 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
 export async function sendChatMessageAction(prevState: any, formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
   const order_id = formData.get("order_id") as string;
   const content = formData.get("content") as string;
