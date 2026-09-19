@@ -75,6 +75,18 @@ export default function MarketTerminal() {
       },
       timeScale: {
         borderColor: 'rgba(255, 255, 255, 0.1)',
+        rightOffset: 5, // give some breathing room on the right
+      },
+      handleScale: {
+        mouseWheel: true,
+        pinch: true,
+        axisPressedMouseMove: true,
+      },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+        vertTouchDrag: true,
       },
       width: chartContainerRef.current.clientWidth,
       height: 500,
@@ -90,6 +102,12 @@ export default function MarketTerminal() {
 
     const historicalData = generateHistoricalData(activeProduct.basePrice);
     candlestickSeries.setData(historicalData);
+    
+    // Set default zoom to be 50% larger (show last 30 days instead of all 60)
+    chart.timeScale().setVisibleLogicalRange({
+      from: historicalData.length - 35,
+      to: historicalData.length + 5, // Include the right offset
+    });
     
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
