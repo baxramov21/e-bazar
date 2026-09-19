@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import BackButton from "@/components/BackButton";
 import { HistoricalPriceChart } from "@/components/DashboardCharts";
-import { generatePricePredictionAction } from "./actions";
 import { Bot, MapPin, Package, Calendar } from "lucide-react";
 
 const timeframes = [
@@ -74,7 +73,7 @@ export default function AnalyticsPage() {
   
   const [chartData, setChartData] = useState(() => generateMockData(products[0].basePrice, products[0].volatility, timeframes[2].id));
   
-  const [isPending, startTransition] = useTransition();
+  const [isGenerating, setIsGenerating] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
 
   const handleProductChange = (e: any) => {
@@ -97,21 +96,45 @@ export default function AnalyticsPage() {
     setAnalysis(null);
   };
 
-  const handleGenerateAnalysis = () => {
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.append("product", selectedProduct.name);
-      formData.append("region", selectedRegion);
-      formData.append("timeframe", timeframes.find(t => t.id === selectedTimeframe)?.name || "Oylik");
-      formData.append("historicalData", JSON.stringify(chartData));
-      
-      const res = await generatePricePredictionAction(formData);
-      if (res?.success) {
-        setAnalysis(res.analysis || null);
-      } else {
-        setAnalysis("Tahlil yaratishda xatolik yuz berdi: " + res?.error);
+  const handleGenerateAnalysis = async () => {
+    setIsGenerating(true);
+    setAnalysis("");
+
+    try {
+      const res = await fetch("/api/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product: selectedProduct.name,
+          region: selectedRegion,
+          timeframe: timeframes.find(t => t.id === selectedTimeframe)?.name || "Oylik",
+          historicalData: JSON.stringify(chartData)
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Tarmoq xatosi yuz berdi.");
       }
-    });
+      
+      if (!res.body) throw new Error("Javob olinmadi");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          setAnalysis((prev) => (prev || "") + chunk);
+        }
+      }
+    } catch (err: any) {
+      setAnalysis("Tahlil yaratishda xatolik yuz berdi: " + err.message);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -197,26 +220,47 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {!analysis ? (
+        {!analysis && !isGenerating ? (
           <div style={{ textAlign: "center", padding: "40px 0" }}>
             <button 
               onClick={handleGenerateAnalysis} 
-              disabled={isPending}
+              disabled={isGenerating}
               className="btn btn-primary"
               style={{ padding: "12px 24px", fontSize: "1rem" }}
             >
-              {isPending ? "Tahlil qilinmoqda..." : "AI Tahlilni Boshlash"}
+              AI Tahlilni Boshlash
             </button>
           </div>
         ) : (
           <div className="fade-in" style={{ padding: 24, background: "var(--color-bg-base)", borderRadius: "var(--radius-md)", border: "1px dashed var(--color-accent)" }}>
+            <style>{`
+              @keyframes blink-cursor {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+              }
+            `}</style>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: "1rem", lineHeight: 1.6, color: "var(--color-text-secondary)", whiteSpace: "pre-wrap" }}>
-              {analysis}
+              <span>
+                {analysis}
+                {isGenerating && (
+                  <span style={{ 
+                    display: "inline-block", 
+                    width: "8px", 
+                    height: "1em", 
+                    background: "var(--color-accent)", 
+                    verticalAlign: "middle", 
+                    marginLeft: "4px",
+                    animation: "blink-cursor 1s step-end infinite" 
+                  }} />
+                )}
+              </span>
             </div>
             
-            <button onClick={() => setAnalysis(null)} className="btn btn-secondary btn-sm" style={{ marginTop: 20 }}>
-              Yangi tahlil
-            </button>
+            {!isGenerating && (
+              <button onClick={() => setAnalysis(null)} className="btn btn-secondary btn-sm" style={{ marginTop: 20 }}>
+                Yangi tahlil
+              </button>
+            )}
           </div>
         )}
       </div>
